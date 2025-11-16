@@ -8,10 +8,47 @@ class LineaReceta
     private array $detalleLineaReceta;
     private int $cantidad;
 
-    public function __construct()
-    {
-
+    public function __construct($medicamento, $cantidad) {
+        $this->medicamento = $medicamento;
+        $this->cantidad = $cantidad;
     }
     public function getSubtotal(){}
     public function crearNotificaciones(){}
+
+    public function anadirSucursal($sucursal, $cantidad){
+        $dlr = new DetalleLineaReceta($sucursal,$cantidad);
+        $this->detalleLineaReceta[] = $dlr;
+    }
+
+    public function getMedicamento(): Medicamento
+    {
+        return $this->medicamento;
+    }
+
+    public function setMedicamento(Medicamento $medicamento): void
+    {
+        $this->medicamento = $medicamento;
+    }
+
+    public function getDetalleLineaReceta(): array
+    {
+        return $this->detalleLineaReceta;
+    }
+
+    public function setDetalleLineaReceta(array $detalleLineaReceta): void
+    {
+        $this->detalleLineaReceta = $detalleLineaReceta;
+    }
+
+    public function getCantidad(): int
+    {
+        return $this->cantidad;
+    }
+
+    public function setCantidad(int $cantidad): void
+    {
+        $this->cantidad = $cantidad;
+    }
+
+
 }

@@ -15,7 +15,7 @@ CREATE TABLE "Estado" (
 );
 
 CREATE TABLE "Cadena" (
-                          "CadenaID" VARCHAR(10) PRIMARY KEY, -- Especificado como VARCHAR(10)
+                          "CadenaID" VARCHAR(10) PRIMARY KEY,
                           "CadenaNombre" VARCHAR(100) NOT NULL UNIQUE
 );
 
