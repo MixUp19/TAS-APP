@@ -22,9 +22,15 @@ class ControladorProcesarReceta
     public function confirmarReceta(){
         $this->modeloProcesarReceta->confirmarReceta();
     }
-    public function cancelarReceta(){}
-    public function cambiarSucursal($sucursalId){}
+    public function cancelarReceta(){
+        $this->modeloProcesarReceta->cancelarReceta();
+    }
+    public function cambiarSucursal($sucursal){
+        $this->modeloProcesarReceta->cambiarSucursal($sucursal);
+    }
     public function modificarMedicamento($id, $cantidad){}
     public function confirmarMedicamento($lineasDeMedicamento){}
-    public function escanearReceta($imagen){}
+    public function escanearReceta($imagen){
+        $this->modeloProcesarReceta->escanearReceta($imagen);
+    }
 }

@@ -23,4 +23,7 @@ class MedicamentoRepository
         }
         return $lineas;
     }
+    public function obtenerMedicamentoPorNombre($nombre){
+
+    }
 }

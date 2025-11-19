@@ -91,10 +91,8 @@ CREATE TABLE "Receta" (
                           "SucursalID" VARCHAR(10) NOT NULL,
                           CONSTRAINT fk_receta_paciente FOREIGN KEY ("PacienteID")
                               REFERENCES "Paciente" ("PacienteID") ON DELETE RESTRICT,
-                          CONSTRAINT fk_receta_cadena FOREIGN KEY ("CadenaID")
-                              REFERENCES "Sucursal" ("CadenaID") ON DELETE RESTRICT,
-                          CONSTRAINT fk_receta_sucursal FOREIGN KEY ("SucursalID")
-                              REFERENCES "Sucursal" ("SucursalID") ON DELETE RESTRICT
+                          CONSTRAINT fk_receta_cadena FOREIGN KEY ("SucursalID","CadenaID")
+                              REFERENCES "Sucursal" ("SucursalID","CadenaID") ON DELETE RESTRICT
 );
 
 -------------------------------------------
@@ -109,10 +107,8 @@ CREATE TABLE "Inventario" (
                               "InventarioMaximo" INT,
                               "InventarioMinimo" INT,
                               PRIMARY KEY ("SucursalID", "CadenaID", "MedicamentoID"),
-                              CONSTRAINT fk_inventario_sucursal FOREIGN KEY ("SucursalID")
-                                  REFERENCES "Sucursal" ("SucursalID") ON DELETE RESTRICT,
-                              CONSTRAINT fk_inventario_cadena FOREIGN KEY ("CadenaID")
-                                  REFERENCES "Sucursal" ("CadenaID") ON DELETE RESTRICT,
+                              CONSTRAINT fk_inventario_sucursal FOREIGN KEY ("SucursalID","CadenaID")
+                                  REFERENCES "Sucursal" ("SucursalID","CadenaID") ON DELETE RESTRICT,
                               CONSTRAINT fk_inventario_medicamento FOREIGN KEY ("MedicamentoID")
                                   REFERENCES "Medicamentos" ("MedicamentoID") ON DELETE RESTRICT
 );
@@ -139,8 +135,11 @@ CREATE TABLE "Detalle_Linea_Receta" (
                                         PRIMARY KEY ("RecetaFolio", "MedicamentoID", "SucursalID", "CadenaID"),
                                         CONSTRAINT fk_dlr_linea_receta FOREIGN KEY ("RecetaFolio", "MedicamentoID")
                                             REFERENCES "LINEA_RECETA" ("RecetaFolio", "MedicamentoID") ON DELETE CASCADE,
-                                        CONSTRAINT fk_dlr_sucursal FOREIGN KEY ("SucursalID")
-                                            REFERENCES "Sucursal" ("SucursalID") ON DELETE RESTRICT,
-                                        CONSTRAINT fk_dlr_cadena FOREIGN KEY ("CadenaID")
-                                            REFERENCES "Sucursal" ("CadenaID") ON DELETE RESTRICT
+                                        CONSTRAINT fk_dlr_sucursal FOREIGN KEY ("SucursalID", "CadenaID")
+                                            REFERENCES "Sucursal" ("SucursalID","CadenaID") ON DELETE RESTRICT
 );
+
+alter table "Paciente" add column "PacienteContrasena" VARCHAR(100);
+
+Select * from "Estado";
+Select * from "Ciudad" where "EstadoID" = 25;

@@ -1,5 +1,6 @@
 <?php
 
+use App\DomainModels\LineaReceta;
 use App\Providers\ServicioOCR;
 use App\Providers\SucursalRepository;
 use \App\Providers\LocalizadorService;
@@ -36,9 +37,21 @@ class ModeloProcesarReceta {
         $lineas = $this->medicamentoRepository->buscarMedicamentosEnSucursales($sucursal, $sucursales, $lineas);
         $this->recetaRepository->guardarReceta($this->receta);
     }
-    public function cancelarReceta(){}
-    public function cambiarSucursal($sucursalId){}
+    public function cancelarReceta(){
+        $this->receta = null;
+    }
+    public function cambiarSucursal($sucursal){
+        $this->receta->setSucursal($sucursal);
+    }
     public function modificarMedicamento($id, $cantidad){}
     public function confirmarMedicamento($lineasDeMedicamento){}
-    public function escanearReceta($imagen){}
+    public function escanearReceta($imagen){
+        $nombresMedicamentos = $this->servicioOCR->escanearReceta($imagen);
+        $lineasDeMedicamentos = [];
+        foreach($nombresMedicamentos as $nombreMedicamento){
+            $medicamento = $this->medicamentoRepository->obtenerMedicamentoPorNombre($nombreMedicamento);
+            $lineasDeMedicamentos[] = new LineaReceta($medicamento, 1);
+        }
+        return $lineasDeMedicamentos;
+    }
 }
