@@ -140,6 +140,26 @@ CREATE TABLE "Detalle_Linea_Receta" (
 );
 
 alter table "Paciente" add column "PacienteContrasena" VARCHAR(100);
+alter table "Paciente" add column "PacienteActivo" BOOLEAN DEFAULT false;
+alter table "Paciente" add column "PacienteIntentosFallidos" INT DEFAULT 0;
+alter table "Paciente" add column "PacienteFechaUltimoIntento" DATE;
 
 Select * from "Estado";
 Select * from "Ciudad" where "EstadoID" = 25;
+
+INSERT INTO "Medicamentos" ("MedicamentoNombre", "MedicamentoPrecio", "MedicamentoCompuestoActivo", "MedicamentoUnidad", "MedicamentoContenido") VALUES
+('Paracetamol', 25.50, 'Paracetamol', 'mg', '500 mg, 10 tabletas'),
+('Ibuprofeno', 30.00, 'Ibuprofeno', 'mg', '400 mg, 10 tabletas'),
+('Amoxicilina', 80.75, 'Amoxicilina', 'mg', '500 mg, 12 cápsulas'),
+('Loratadina', 45.00, 'Loratadina', 'mg', '10 mg, 10 tabletas'),
+('Omeprazol', 60.20, 'Omeprazol', 'mg', '20 mg, 14 cápsulas'),
+('Salbutamol Inhalador', 150.00, 'Salbutamol', 'mcg', '100 mcg/dosis, 200 dosis'),
+('Metformina', 75.50, 'Metformina', 'mg', '850 mg, 30 tabletas'),
+('Losartán', 95.00, 'Losartán potásico', 'mg', '50 mg, 30 tabletas'),
+('Aspirina', 20.00, 'Ácido acetilsalicílico', 'mg', '500 mg, 20 tabletas'),
+('Diclofenaco Gel', 70.00, 'Diclofenaco sódico', 'g', '60 g'),
+('Clonazepam', 120.00, 'Clonazepam', 'mg', '2 mg, 30 tabletas'),
+('Ciprofloxacino', 110.50, 'Ciprofloxacino', 'mg', '500 mg, 10 tabletas'),
+('Naproxeno', 40.00, 'Naproxeno sódico', 'mg', '550 mg, 10 tabletas'),
+('Cetirizina', 55.00, 'Diclorhidrato de cetirizina', 'mg', '10 mg, 10 tabletas'),
+('Atorvastatina', 180.00, 'Atorvastatina', 'mg', '20 mg, 30 tabletas');

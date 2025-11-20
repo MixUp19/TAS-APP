@@ -22,7 +22,10 @@ class Paciente extends Model
         'PacienteTelefono',
         'PacienteCorreo',
         'PacienteFechaRegistro',
-        'PacienteContrasena'
+        'PacienteContrasena',
+        'PacienteActivo',
+        'PacienteIntentosFallidos',
+        'PacienteFechaUltimoIntento',
     ];
 
     protected $casts = [

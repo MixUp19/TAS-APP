@@ -4,6 +4,7 @@ namespace App\Providers;
 use App\DomainModels\Medicamento;
 use App\DomainModels\LineaReceta;
 use App\DomainModels\Sucursal;
+use App\Models\Medicamento as MedicamentoModel;
 
 class MedicamentoRepository
 {
@@ -23,7 +24,37 @@ class MedicamentoRepository
         }
         return $lineas;
     }
+    public function obtenerMedicamentoPorId($id){
+        $medicamentoModel = MedicamentoModel::where('MedicamentoID', '=', $id)->first();
+        if ($medicamentoModel) {
+            return $this->eloquentToDomain($medicamentoModel);
+        }
+        return null;
+    }
     public function obtenerMedicamentoPorNombre($nombre){
+        $medicamentoModel = MedicamentoModel::where('MedicamentoNombre', 'like', '%' . $nombre . '%')->first();
+        if ($medicamentoModel) {
+            return $this->eloquentToDomain($medicamentoModel);
+        }
+        return null;
+    }
+    public function obtenerMedicamentos():array{
+        $models = MedicamentoModel::all();
+        $domain =[];
+        foreach($models as $model){
+            $domain[] = $this->eloquentToDomain($model);
+        }
+        return $domain;
+    }
 
+    private function eloquentToDomain(MedicamentoModel $medicamento):Medicamento{
+        return new Medicamento(
+            $medicamento['MedicamentoID'],
+            $medicamento['MedicamentoNombre'],
+            $medicamento['MedicamentoCompuestoActivo'],
+            $medicamento['MedicamentoPrecio'],
+            $medicamento['MedicamentoUnidad'],
+            $medicamento['MedicamentoContenido']
+        );
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Date;
 
 class Receta
 {
-    private Paciente $paciente;
+    private ?Paciente $paciente;
     private Sucursal $sucursal;
     private string $cedulaDoctor;
     private Date $fecha;

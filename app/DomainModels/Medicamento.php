@@ -7,21 +7,26 @@ class Medicamento
     private int $id;
     private string $nombre;
     private string $compuestoActivo;
-    private double $precio;
+    private float $precio;
     private string $unidad;
-    private double $contenido;
+    private string $contenido;
 
-    public function __construct()
+    public function __construct(int $id, string $nombre, string $compuestoActivo, float $precio, string $unidad, string $contenido)
     {
-
+        $this->id = $id;
+        $this->nombre = $nombre;
+        $this->compuestoActivo = $compuestoActivo;
+        $this->precio = $precio;
+        $this->unidad = $unidad;
+        $this->contenido = $contenido;
     }
 
-    public function getContenido(): float
+    public function getContenido(): string
     {
         return $this->contenido;
     }
 
-    public function setContenido(float $contenido): void
+    public function setContenido(string $contenido): void
     {
         $this->contenido = $contenido;
     }

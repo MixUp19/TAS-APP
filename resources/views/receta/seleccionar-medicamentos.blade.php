@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleccionar Medicamentos</title>
+    {{-- Incluye aquí tus estilos CSS, como Bootstrap --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Seleccionar Medicamentos</h1>
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Añadir Medicamento</h5>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label for="medicamento-select" class="form-label">Medicamento</label>
+                    <select id="medicamento-select" class="form-select">
+                        <option selected disabled>Seleccione un medicamento</option>
+                        @foreach ($medicamentos as $medicamento)
+                            <option value="{{ $medicamento->getId() }}"
+                                    data-nombre="{{ $medicamento->getNombre() }}"
+                                    data-compuesto="{{ $medicamento->getCompuestoActivo() }}"
+                                    data-precio="{{ $medicamento->getPrecio() }}"
+                                    data-contenido="{{ $medicamento->getContenido() }} {{ $medicamento->getUnidad() }}">
+                                {{ $medicamento->getNombre() }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="cantidad-input" class="form-label">Cantidad</label>
+                    <input type="number" id="cantidad-input" class="form-control" value="1" min="1">
+                </div>
+                <div class="col-md-3">
+                    <button type="button" id="add-medicamento-btn" class="btn btn-primary w-100">Añadir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form action="{{ route('medicamentos.store') }}" method="POST" id="receta-form">
+        @csrf
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Medicamentos Seleccionados</h5>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Compuesto</th>
+                        <th>Precio</th>
+                        <th>Contenido</th>
+                        <th>Cantidad</th>
+                        <th>Acción</th>
+                    </tr>
+                    </thead>
+                    <tbody id="medicamentos-seleccionados-tbody">
+                    {{-- Las filas se añadirán aquí dinámicamente --}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success">Guardar Receta</button>
+        </div>
+    </form>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addBtn = document.getElementById('add-medicamento-btn');
+        const select = document.getElementById('medicamento-select');
+        const cantidadInput = document.getElementById('cantidad-input');
+        const tbody = document.getElementById('medicamentos-seleccionados-tbody');
+        const form = document.getElementById('receta-form');
+
+        addBtn.addEventListener('click', function () {
+            const selectedOption = select.options[select.selectedIndex];
+            if (!selectedOption || selectedOption.disabled) {
+                alert('Por favor, seleccione un medicamento.');
+                return;
+            }
+
+            const cantidad = cantidadInput.value;
+            if (cantidad < 1) {
+                alert('La cantidad debe ser al menos 1.');
+                return;
+            }
+
+            const medicineId = selectedOption.value;
+
+            // Evitar duplicados
+            if (form.querySelector(`input[name="medicamentos[${medicineId}][id]"]`)) {
+                alert('Este medicamento ya ha sido añadido.');
+                return;
+            }
+
+            const newRow = tbody.insertRow();
+            newRow.setAttribute('data-medicamento-id', medicineId);
+            newRow.innerHTML = `
+                <td>${selectedOption.dataset.nombre}</td>
+                <td>${selectedOption.dataset.compuesto}</td>
+                <td>$${parseFloat(selectedOption.dataset.precio).toFixed(2)}</td>
+                <td>${selectedOption.dataset.contenido}</td>
+                <td>${cantidad}</td>
+                <td><button type="button" class="btn btn-danger btn-sm remove-medicamento-btn">Eliminar</button></td>
+            `;
+
+            // Añadir inputs ocultos para el envío del formulario
+            const hiddenInputsContainer = document.createElement('div');
+            hiddenInputsContainer.setAttribute('data-medicamento-id', medicineId);
+            hiddenInputsContainer.innerHTML = `
+                <input type="hidden" name="medicamentos[${medicineId}][id]" value="${medicineId}">
+                <input type="hidden" name="medicamentos[${medicineId}][cantidad]" value="${cantidad}">
+            `;
+            form.appendChild(hiddenInputsContainer);
+
+            // Reset select
+            select.selectedIndex = 0;
+            cantidadInput.value = 1;
+        });
+
+        tbody.addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('remove-medicamento-btn')) {
+                const row = e.target.closest('tr');
+                const medicineId = row.getAttribute('data-medicamento-id');
+
+                // Eliminar fila de la tabla
+                row.remove();
+
+                // Eliminar inputs ocultos del formulario
+                const hiddenInputs = form.querySelector(`div[data-medicamento-id="${medicineId}"]`);
+                if (hiddenInputs) {
+                    hiddenInputs.remove();
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
