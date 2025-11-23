@@ -109,4 +109,13 @@ class ModeloProcesarReceta
         // Obtiene todas las sucursales desde el repositorio
         return $this->sucursalRepository->listarSucursales();
     }
+
+
+    public function obtenerSucursales()
+    {
+        // Obtiene todas las sucursales desde el repositorio
+        return $this->sucursalRepository->listarSucursales();
+    }
+
+
 }
