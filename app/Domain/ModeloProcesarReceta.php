@@ -4,11 +4,13 @@ namespace App\Domain;
 
 use App\DomainModels\LineaReceta;
 use App\DomainModels\Receta;
+use App\DomainModels\Sucursal;
 use App\Providers\LocalizadorService;
 use App\Providers\MedicamentoRepository;
 use App\Providers\RecetaRepository;
 use App\Providers\ServicioOCR;
 use App\Providers\SucursalRepository;
+use Illuminate\Database\Eloquent\Collection;
 
 class ModeloProcesarReceta
 {
@@ -87,7 +89,7 @@ class ModeloProcesarReceta
         foreach ($lineasDeMedicamento as $linea) {
             $this->receta->anadirLinea($linea->getMedicamento(), $linea->getCantidad());
         }
-        
+
     }
 
     public function escanearReceta($imagen)
@@ -103,4 +105,13 @@ class ModeloProcesarReceta
     public function getReceta(): Receta{
         return $this->receta;
     }
+
+
+    public function obtenerSucursales()
+    {
+        // Obtiene todas las sucursales desde el repositorio
+        return $this->sucursalRepository->listarSucursales();
+    }
+
+
 }

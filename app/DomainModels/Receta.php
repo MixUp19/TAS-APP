@@ -40,7 +40,9 @@ class Receta
             }
         }
     }
-    public function anadirLineaLr($lr){}
+    public function anadirLineaLr($lr){
+        $this->lineasRecetas[] = $lr;
+    }
     public function notificarDevolucion($id){}
 
 
