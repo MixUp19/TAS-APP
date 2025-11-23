@@ -13,7 +13,7 @@ Route::get('/seleccionar-medicamentos', [ControladorProcesarReceta::class, 'obte
 Route::post('/seleccionar-medicamento', [ControladorProcesarReceta::class, 'seleccionarMedicamento'])->name('medicamentos.add');
 
 
-//rutas en fase de desarrollo 
+//rutas en fase de desarrollo
 Route::get('/receta/formulario', [ControladorProcesarReceta::class, 'obtenerSucursales'])
     ->name('receta.formulario');
 

@@ -27,7 +27,7 @@ class Receta
         }
         return $total;
     }
-    
+
     public function modificarMedicamento($id, $cantidad){
         foreach ($this->lineasRecetas as $index => $linea) {
             if ($linea->getMedicamento()->getId() === $id) {

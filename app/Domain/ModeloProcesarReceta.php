@@ -109,6 +109,4 @@ class ModeloProcesarReceta
         // Obtiene todas las sucursales desde el repositorio
         return $this->sucursalRepository->listarSucursales();
     }
-
-
 }
