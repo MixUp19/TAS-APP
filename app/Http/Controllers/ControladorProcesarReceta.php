@@ -171,5 +171,12 @@ class ControladorProcesarReceta
     $this->guardarModelo($request, $modelo);
 
     return redirect()->route('receta.seleccionarMedicamentos');
-}
+    }
+
+    public function obtenerSucursales(Request $request){
+        $modelo = $this->obtenerOInicializarModelo($request);
+        $sucursales = $modelo->obtenerSucursales();
+        return view('receta.formularioReceta', ['sucursales' => $sucursales]);
+    }
+
 }

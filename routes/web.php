@@ -14,14 +14,8 @@ Route::post('/seleccionar-medicamento', [ControladorProcesarReceta::class, 'sele
 
 
 //rutas en fase de desarrollo 
-Route::get('/receta/formulario', function () {
-    
-   
-    $sucursal = new \stdClass();
-    $sucursal->id = 99;
-    $sucursal->nombre = "Sucursal Central";
-    return view('receta.formularioReceta', compact('sucursal'));
-});
+Route::get('/receta/formulario', [ControladorProcesarReceta::class, 'obtenerSucursales'])
+    ->name('receta.formulario');
 
 Route::post('/receta/guardar-encabezado', [ControladorProcesarReceta::class, 'guardarEncabezado'])
     ->name('receta.guardarEncabezado');
