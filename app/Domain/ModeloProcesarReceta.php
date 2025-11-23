@@ -79,10 +79,15 @@ class ModeloProcesarReceta
 
     public function modificarMedicamento($id, $cantidad)
     {
+        $this->receta->modificarMedicamento($id, $cantidad);
     }
 
     public function confirmarMedicamento($lineasDeMedicamento)
     {
+        foreach ($lineasDeMedicamento as $linea) {
+            $this->receta->anadirLinea($linea->getMedicamento(), $linea->getCantidad());
+        }
+        
     }
 
     public function escanearReceta($imagen)
