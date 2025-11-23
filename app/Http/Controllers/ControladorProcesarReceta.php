@@ -61,6 +61,7 @@ class ControladorProcesarReceta
         $modelo = $this->obtenerOInicializarModelo($request);
         $modelo->seleccionarMedicamento($medicamentoId, $cantidad);
         $this->guardarModelo($request, $modelo);
+        return back()->with('success', 'Medicamento añadido a la receta.');
     }
 
     public function guardarMedicamentos(Request $request)
@@ -117,7 +118,15 @@ class ControladorProcesarReceta
 
     public function modificarMedicamento(Request $request, $id, $cantidad)
     {
-        // Implementación similar: obtener, modificar, guardar.
+        $request->validate([
+            'medicamento_id'=> 'required|integer',
+            'cantidad' => 'required|integer|min:1',
+        ]);
+        $id = $request->input('medicamento_id');
+        $cantidad = $request->input('cantidad');
+        $modelo = $this->obtenerOInicializarModelo($request);
+        $modelo->modificarMedicamento($id, $cantidad);
+        $this->guardarModelo($request, $modelo);
     }
 
     public function escanearReceta(Request $request, $imagen)
@@ -140,4 +149,33 @@ class ControladorProcesarReceta
         $modelo = $this->obtenerOInicializarModelo($request);
         return $modelo->getReceta();
     }
+
+    public function confirmarMedicamento(Request $request, $id)
+    {
+        $modelo = $this->obtenerOInicializarModelo($request);
+        $modelo->confirmarMedicamento($id);
+        $this->guardarModelo($request, $modelo);
+    }
+
+
+
+    //funcion en dev para guardar el encabezado de la receta (NO final)
+    public function guardarEncabezado(Request $request){
+    $datos = $request->validate([
+        'sucursal_id' => 'required',
+        'cedula'      => 'required',
+        'fecha'       => 'required|date',
+    ]);
+
+    $modelo = $this->obtenerOInicializarModelo($request);
+
+
+    $modelo->seleccionarSucursal($datos['sucursal_id']);
+    $modelo->cedula = $datos['cedula'];
+    $modelo->fecha  = $datos['fecha'];
+
+    $this->guardarModelo($request, $modelo);
+
+    return redirect()->route('receta.seleccionarMedicamentos');
+}
 }

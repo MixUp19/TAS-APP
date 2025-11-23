@@ -40,7 +40,6 @@ class Receta extends Model
     {
         return $this->belongsTo(Cadena::class, 'CadenaID', 'CadenaID');
     }
-
     public function lineas()
     {
         return $this->hasMany(LineaReceta::class, 'RecetaFolio', 'RecetaFolio');
@@ -52,4 +51,3 @@ class Receta extends Model
         return Sucursal::findByKeys($this->SucursalID, $this->CadenaID);
     }
 }
-

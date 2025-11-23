@@ -27,9 +27,22 @@ class Receta
         }
         return $total;
     }
-    public function modificarMedicamento($id, $cantidad){}
+    
+    public function modificarMedicamento($id, $cantidad){
+        foreach ($this->lineasRecetas as $index => $linea) {
+            if ($linea->getMedicamento()->getId() === $id) {
+                if ($cantidad <= 0) {
+                    unset($this->lineasRecetas[$index]);
+                    $this->lineasRecetas = array_values($this->lineasRecetas);
+                } else {
+                    $linea->setCantidad($cantidad);
+                }
+            }
+        }
+    }
     public function anadirLineaLr($lr){}
     public function notificarDevolucion($id){}
+
 
     public function getPaciente(): Paciente
     {
