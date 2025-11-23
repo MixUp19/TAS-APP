@@ -95,4 +95,7 @@ class ModeloProcesarReceta
         }
         return $lineasDeMedicamentos;
     }
+    public function getReceta(): Receta{
+        return $this->receta;
+    }
 }

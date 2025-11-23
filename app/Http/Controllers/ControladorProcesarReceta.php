@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\ModeloProcesarReceta;
+use App\DomainModels\Receta;
 use App\Models\Paciente; // Usamos el modelo de Eloquent
 use Illuminate\Http\Request;
 
@@ -60,7 +61,6 @@ class ControladorProcesarReceta
         $modelo = $this->obtenerOInicializarModelo($request);
         $modelo->seleccionarMedicamento($medicamentoId, $cantidad);
         $this->guardarModelo($request, $modelo);
-        return back()->with('success', 'Medicamento añadido a la receta.');
     }
 
     public function guardarMedicamentos(Request $request)
@@ -134,5 +134,10 @@ class ControladorProcesarReceta
         $modelo->iniciarPedido(null);
         $this->guardarModelo($request, $modelo);
         return view('receta/seleccionar-medicamentos', ['medicamentos' => $medicamentos]);
+    }
+
+    public function obtenerReceta(Request $request): Receta{
+        $modelo = $this->obtenerOInicializarModelo($request);
+        return $modelo->getReceta();
     }
 }
