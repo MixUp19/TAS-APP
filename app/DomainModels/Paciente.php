@@ -27,15 +27,15 @@ class Paciente
      * @param int $intentosFallidos
      * @param \DateTime|null $ultimoIntento
      */
-    public function __construct(int $id =null,
-                                string $nombre=null,
-                                string $apellidoMaterno=null,
-                                string $apellidoPaterno=null,
-                                string $email = null,
-                                string $telefono = null,
-                                string $contrasena = null,
-                                bool $sesionActiva = null,
-                                int $intentosFallidos = null, ?\DateTime $ultimoIntento)
+    public function __construct(int $id,
+                                string $nombre,
+                                string $apellidoMaterno,
+                                string $apellidoPaterno,
+                                string $email,
+                                string $telefono,
+                                string $contrasena,
+                                bool $sesionActiva,
+                                int $intentosFallidos, ?\DateTime $ultimoIntento)
     {
         $this->id = $id;
         $this->nombre = $nombre;

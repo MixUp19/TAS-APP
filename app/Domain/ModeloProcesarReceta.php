@@ -89,7 +89,7 @@ class ModeloProcesarReceta
         foreach ($lineasDeMedicamento as $linea) {
             $this->receta->anadirLineaLr($linea);
         }
-        
+
     }
 
     public function escanearReceta($imagen)
@@ -110,5 +110,5 @@ class ModeloProcesarReceta
         return $this->sucursalRepository->listarSucursales();
     }
 
-    
+
 }

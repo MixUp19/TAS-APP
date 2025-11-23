@@ -145,7 +145,7 @@ class ControladorProcesarReceta
     }
 
     public function confirmarMedicamento(Request $request, $id)
-    {   
+    {
         $modelo = $this->obtenerOInicializarModelo($request);
         $modelo->confirmarMedicamento($id);
         $this->guardarModelo($request, $modelo);
@@ -163,9 +163,9 @@ class ControladorProcesarReceta
 
     $modelo = $this->obtenerOInicializarModelo($request);
 
-    
+
     $modelo->seleccionarSucursal($datos['sucursal_id']);
-    $modelo->cedula = $datos['cedula']; 
+    $modelo->cedula = $datos['cedula'];
     $modelo->fecha  = $datos['fecha'];
 
     $this->guardarModelo($request, $modelo);
