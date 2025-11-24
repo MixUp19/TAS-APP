@@ -8,14 +8,14 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/seleccionar-medicamentos', [ControladorProcesarReceta::class, 'obtenerMedicamentos'])->name('receta.seleccionarMedicamentos');
+Route::get('/receta/seleccionar-medicamentos', [ControladorProcesarReceta::class, 'obtenerMedicamentos'])->name('receta.seleccionarMedicamentos');
 
-Route::post('/seleccionar-medicamento', [ControladorProcesarReceta::class, 'seleccionarMedicamento'])->name('medicamentos.add');
+Route::post('/receta/guardarMedicamentos', [ControladorProcesarReceta::class, 'guardarMedicamentos'])->name('medicamentos.add');
 
 
-//rutas en fase de desarrollo 
+//rutas en fase de desarrollo
 Route::get('/receta/formulario', [ControladorProcesarReceta::class, 'obtenerSucursales'])
     ->name('receta.formulario');
 
-Route::post('/receta/guardar-encabezado', [ControladorProcesarReceta::class, 'guardarEncabezado'])
+Route::post('/receta/guardar-encabezado', [ControladorProcesarReceta::class, 'seleccionarSucursal'])
     ->name('receta.guardarEncabezado');
