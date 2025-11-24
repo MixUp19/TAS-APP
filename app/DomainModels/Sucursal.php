@@ -5,16 +5,29 @@ namespace App\DomainModels;
 class Sucursal
 {
     private Cadena $cadena;
-    private int $sucursalId;
-    private string $nombre;
+    private string $sucursalId;
     private string $colonia;
     private string $calle;
-    private double $latitud;
-    private double $longitud;
+    private float $latitud;
+    private float $longitud;
     private int $ciudadId;
-    public function __construct()
+    public function __construct(
+        Cadena $cadena,
+        string $sucursalId,
+        string $colonia,
+        string $calle,
+        float $latitud,
+        float $longitud,
+        float $ciudadId
+    )
     {
-
+        $this->cadena = $cadena;
+        $this->sucursalId = $sucursalId;
+        $this->colonia = $colonia;
+        $this->calle = $calle;
+        $this->latitud = $latitud;
+        $this->longitud = $longitud;
+        $this->ciudadId = $ciudadId;
     }
 
     public function getCadena(): Cadena
@@ -27,24 +40,14 @@ class Sucursal
         $this->cadena = $cadena;
     }
 
-    public function getSucursalId(): int
+    public function getSucursalId(): string
     {
         return $this->sucursalId;
     }
 
-    public function setSucursalId(int $sucursalId): void
+    public function setSucursalId(string $sucursalId): void
     {
         $this->sucursalId = $sucursalId;
-    }
-
-    public function getNombre(): string
-    {
-        return $this->nombre;
-    }
-
-    public function setNombre(string $nombre): void
-    {
-        $this->nombre = $nombre;
     }
 
     public function getColonia(): string

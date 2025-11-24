@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <form action="{{ route('medicamentos.store') }}" method="POST" id="receta-form">
+    <form action="{{ route('medicamentos.add') }}" method="POST" id="receta-form">
         @csrf
         <div class="card">
             <div class="card-body">

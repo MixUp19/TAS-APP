@@ -4,17 +4,23 @@ namespace App\DomainModels;
 
 class Cadena
 {
-    private int $cadenaId;
+    private string $cadenaId;
     private string $nombre;
 
-    public function __construct() {}
+    public function __construct(
+        string $cadenaId,
+        string $nombre
+    ) {
+        $this->cadenaId = $cadenaId;
+        $this->nombre = $nombre;
+    }
 
-    public function getCadenaId(): int
+    public function getCadenaId(): string
     {
         return $this->cadenaId;
     }
 
-    public function setCadenaId(int $cadenaId): void
+    public function setCadenaId(string $cadenaId): void
     {
         $this->cadenaId = $cadenaId;
     }

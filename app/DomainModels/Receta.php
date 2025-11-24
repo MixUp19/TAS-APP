@@ -2,6 +2,7 @@
 
 namespace App\DomainModels;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
 
 class Receta
@@ -9,7 +10,7 @@ class Receta
     private ?Paciente $paciente;
     private Sucursal $sucursal;
     private string $cedulaDoctor;
-    private Date $fecha;
+    private Carbon $fecha;
     private string $estado;
     private array $lineasRecetas;
     public function __construct($paciente){
@@ -76,14 +77,14 @@ class Receta
         $this->cedulaDoctor = $cedulaDoctor;
     }
 
-    public function getFecha(): Date
+    public function getFecha(): Carbon
     {
         return $this->fecha;
     }
 
-    public function setFecha(Date $fecha): void
+    public function setFecha(string $fecha): void
     {
-        $this->fecha = $fecha;
+        $this->fecha = Date::parse($fecha);
     }
 
     public function getEstado(): string

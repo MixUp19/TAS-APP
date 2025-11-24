@@ -163,3 +163,5 @@ INSERT INTO "Medicamentos" ("MedicamentoNombre", "MedicamentoPrecio", "Medicamen
 ('Naproxeno', 40.00, 'Naproxeno sódico', 'mg', '550 mg, 10 tabletas'),
 ('Cetirizina', 55.00, 'Diclorhidrato de cetirizina', 'mg', '10 mg, 10 tabletas'),
 ('Atorvastatina', 180.00, 'Atorvastatina', 'mg', '20 mg, 30 tabletas');
+
+select * from "Sucursal";

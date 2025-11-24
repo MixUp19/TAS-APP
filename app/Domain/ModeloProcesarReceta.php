@@ -14,16 +14,14 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ModeloProcesarReceta
 {
-    private Receta $receta;
+    private ?Receta $receta = null;
     private SucursalRepository $sucursalRepository;
     private ServicioOCR $servicioOCR;
     private LocalizadorService $localizadorService;
     private MedicamentoRepository $medicamentoRepository;
     private RecetaRepository $recetaRepository;
 
-    // El constructor ya no recibe dependencias para poder serializarlo en la sesión.
     public function __construct() {
-        // Las dependencias se resuelven desde el contenedor de servicios de Laravel.
         $this->sucursalRepository = app(SucursalRepository::class);
         $this->servicioOCR = app(ServicioOCR::class);
         $this->localizadorService = app(LocalizadorService::class);
@@ -41,15 +39,19 @@ class ModeloProcesarReceta
         $this->receta = new Receta($paciente);
     }
 
-    public function seleccionarSucursal($sucursal)
+    public function seleccionarSucursal($sucursalId, $cadenaId, $doctorCedula, $fecha)
     {
+        $sucursal = $this->sucursalRepository->obtenerSucursal($sucursalId,$cadenaId);
         $this->receta->setSucursal($sucursal);
+        $this->receta->setCedulaDoctor($doctorCedula);
+        $this->receta->setFecha($fecha);
     }
 
     public function seleccionarMedicamento($id, $cantidad)
     {
         $med = $this->medicamentoRepository->obtenerMedicamentoPorId($id);
         $this->receta->anadirLinea($med, $cantidad);
+        dump($this->receta);
     }
 
     public function finalizarReceta(): int
@@ -111,9 +113,8 @@ class ModeloProcesarReceta
     }
 
 
-    public function obtenerSucursales()
+    public function obtenerSucursales(): array
     {
-        // Obtiene todas las sucursales desde el repositorio
         return $this->sucursalRepository->listarSucursales();
     }
 

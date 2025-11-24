@@ -40,13 +40,6 @@ class ControladorProcesarReceta
         // Aquí podrías redirigir a la siguiente vista, ej: seleccionar sucursal
     }
 
-    public function seleccionarSucursal(Request $request, $sucursal)
-    {
-        $modelo = $this->obtenerOInicializarModelo($request);
-        $modelo->seleccionarSucursal($sucursal);
-        $this->guardarModelo($request, $modelo);
-    }
-
     public function seleccionarMedicamento(Request $request)
     {
         $request->validate([
@@ -139,7 +132,6 @@ class ControladorProcesarReceta
     {
         $modelo = $this->obtenerOInicializarModelo($request);
         $medicamentos =  $modelo->obtenerMedicamentos();
-        $modelo->iniciarPedido(null);
         $this->guardarModelo($request, $modelo);
         return view('receta/seleccionar-medicamentos', ['medicamentos' => $medicamentos]);
     }
@@ -154,23 +146,25 @@ class ControladorProcesarReceta
 
 
     //funcion en dev para guardar el encabezado de la receta (NO final)
-    public function guardarEncabezado(Request $request){
-    $datos = $request->validate([
-        'sucursal_id' => 'required',
-        'cedula'      => 'required',
-        'fecha'       => 'required|date',
-    ]);
+    public function seleccionarSucursal(Request $request){
+        $datos = $request->validate([
+            'sucursal_id' => 'required',
+            'cedula'      => 'required',
+            'fecha'       => 'required|date',
+        ]);
 
-    $modelo = $this->obtenerOInicializarModelo($request);
+        $modelo = $this->obtenerOInicializarModelo($request);
 
+        // Partir el valor de sucursal_id en $sucursalId y $cadenaId
+        list($sucursalId, $cadenaId) = explode(',', $datos['sucursal_id']);
+        $paciente = new \App\DomainModels\Paciente(0,"a","a","a","a","a","a",false, 0, null);
+        $modelo->iniciarPedido($paciente);
+        dump($sucursalId,$cadenaId);
+        $modelo->seleccionarSucursal($sucursalId, $cadenaId, $datos['cedula'], $datos['fecha']);
 
-    $modelo->seleccionarSucursal($datos['sucursal_id']);
-    $modelo->cedula = $datos['cedula'];
-    $modelo->fecha  = $datos['fecha'];
+        $this->guardarModelo($request, $modelo);
 
-    $this->guardarModelo($request, $modelo);
-
-    return redirect()->route('receta.seleccionarMedicamentos');
+        return redirect()->route('receta.seleccionarMedicamentos');
     }
 
     public function obtenerSucursales(Request $request){
