@@ -9,14 +9,22 @@ use Illuminate\Http\Request;
 
 class ControladorProcesarReceta
 {
+    // El constructor ya no necesita inyectar el modelo, ya que se gestionará por sesión.
     public function __construct()
     {
     }
 
+    /**
+     * Obtiene el modelo del proceso desde la sesión del usuario.
+     * Si no existe, crea uno nuevo y lo retorna.
+     */
     private function obtenerOInicializarModelo(Request $request): ModeloProcesarReceta
     {
+        // Usamos el helper session() para obtener/guardar datos en la sesión.
+        // 'proceso_receta' es la clave única para este proceso.
         return $request->session()->get('proceso_receta', new ModeloProcesarReceta());
     }
+
 
     private function guardarModelo(Request $request, ModeloProcesarReceta $modelo): void
     {
@@ -61,10 +69,12 @@ class ControladorProcesarReceta
             $modelo->seleccionarMedicamento($medicamentoData['id'], $medicamentoData['cantidad']);
         }
 
+        $total = $modelo->finalizarReceta();
+        $receta = $modelo->getReceta();
         $this->guardarModelo($request, $modelo);
 
 
-        return redirect()->route('receta.seleccionarMedicamentos')->with('success', 'Receta guardada correctamente.');
+        return view('receta/confirmar-receta', ['total' => $total, 'receta'=> $receta]);
     }
 
 
@@ -77,15 +87,12 @@ class ControladorProcesarReceta
         return $total;
     }
 
-    /**
-     * Confirma la receta y guarda en base de datos.
-     * Limpia la sesión después de confirmar.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function confirmarReceta(Request $request)
     {
+        $modelo = $this->obtenerOInicializarModelo($request);
+        $modelo->confirmarReceta();
+        $request->session()->forget('proceso_receta');
+    }
         try {
             $modelo = $this->obtenerOInicializarModelo($request);
 
