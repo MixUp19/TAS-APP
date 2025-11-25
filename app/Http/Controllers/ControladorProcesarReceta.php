@@ -15,6 +15,7 @@ class ControladorProcesarReceta
 
     private function obtenerOInicializarModelo(Request $request): ModeloProcesarReceta
     {
+
         return $request->session()->get('proceso_receta', new ModeloProcesarReceta());
     }
 
@@ -210,6 +211,7 @@ class ControladorProcesarReceta
         list($sucursalId, $cadenaId) = explode(',', $datos['sucursal_id']);
         $paciente = new \App\DomainModels\Paciente(1,"Juan","Perez","García","juan.perez@email.com","6671234567","$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",true, 0, null);
         $modelo->iniciarPedido($paciente);
+        dump($sucursalId,$cadenaId);
         $modelo->seleccionarSucursal($sucursalId, $cadenaId, $datos['cedula'], $datos['fecha']);
 
         $this->guardarModelo($request, $modelo);
