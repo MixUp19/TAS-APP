@@ -11,8 +11,19 @@ class LineaReceta
     public function __construct($medicamento, $cantidad) {
         $this->medicamento = $medicamento;
         $this->cantidad = $cantidad;
+        $this->detalleLineaReceta = [];
     }
-    public function getSubtotal(){}
+    
+    public function getSubtotal(): float
+    {
+        return $this->cantidad * $this->medicamento->getPrecio();
+    }
+    
+    public function getMedicamentoId(): int
+    {
+        return $this->medicamento->getId();
+    }
+    
     public function crearNotificaciones(){}
 
     public function anadirSucursal($sucursal, $cantidad){
