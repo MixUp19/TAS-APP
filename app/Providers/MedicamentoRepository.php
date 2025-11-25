@@ -5,24 +5,58 @@ use App\DomainModels\Medicamento;
 use App\DomainModels\LineaReceta;
 use App\DomainModels\Sucursal;
 use App\Models\Medicamento as MedicamentoModel;
+use App\Models\Inventario;
 
 class MedicamentoRepository
 {
-    public function buscarMedicamentosEnSucursales(Sucursal $sucursal, array $sucursales, array $lineas): array{
+   public function buscarMedicamentosEnSucursales(Sucursal $sucursalPrincipal, array $sucursales, array $lineas): array
+    {
         foreach($lineas as $linea) {
-            $total = $linea->getCantidad();
-            $actual = $this->obtenerExistenciaMedicamento($sucursales[$i] ,$linea->getMedicamentoId(), $total);
-            $i =0;
-            while($total > $actual){
-                $stock = $this->obtenerExistenciaMedicamento($sucursales[$i] ,$linea->getMedicamentoId(), $total);
-                $actual += $stock;
-                $i++;
-                if($stock > 0) {
-                    $linea->anadirSucursal($sucursal, $stock);
+            $cantidadRequerida = $linea->getCantidad();
+            $cantidadAcumulada = 0;
+            $i = 0;
+            
+            // Buscar en sucursales hasta completar la cantidad requerida
+            while($cantidadAcumulada < $cantidadRequerida && $i < count($sucursales)) {
+                $sucursalActual = $sucursales[$i];
+                $cantidadFaltante = $cantidadRequerida - $cantidadAcumulada;
+                
+                // Obtener stock disponible en esta sucursal
+                $stockDisponible = $this->obtenerExistenciaMedicamento(
+                    $sucursalActual, 
+                    $linea->getMedicamentoId(), 
+                    $cantidadFaltante
+                );
+                
+                if($stockDisponible > 0) {
+                    // Añadir detalle de esta sucursal a la línea
+                    $linea->anadirSucursal($sucursalActual, $stockDisponible);
+                    $cantidadAcumulada += $stockDisponible;
                 }
+                
+                $i++;
             }
+            
+
         }
         return $lineas;
+    }
+    
+    private function obtenerExistenciaMedicamento(Sucursal $sucursal, int $medicamentoId, int $cantidadSolicitada): int
+    {
+        $inventario = Inventario::where('SucursalID', $sucursal->getSucursalId())
+            ->where('CadenaID', $sucursal->getCadena()->getCadenaId())
+            ->where('MedicamentoID', $medicamentoId)
+            ->first();
+        
+        if (!$inventario) {
+            return 0;
+        }
+        
+        $stockDisponible = $inventario->InventarioCantidad;
+        
+        // Retornar el menor entre lo disponible y lo solicitado
+        return min($stockDisponible, $cantidadSolicitada);
     }
     public function obtenerMedicamentoPorId($id){
         $medicamentoModel = MedicamentoModel::where('MedicamentoID', '=', $id)->first();

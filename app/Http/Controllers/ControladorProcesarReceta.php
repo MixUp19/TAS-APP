@@ -61,21 +61,33 @@ class ControladorProcesarReceta
     {
         $medicamentos = $request->input('medicamentos', []);
 
+        \Log::info('Guardando medicamentos', ['medicamentos' => $medicamentos]);
+
         if (empty($medicamentos)) {
             return back()->withErrors('No se ha seleccionado ningún medicamento.');
         }
 
         $modelo = $this->obtenerOInicializarModelo($request);
-
+        
+        // Verificar que existe una receta iniciada
+        if (!$modelo->getReceta()) {
+            return redirect()->route('receta.formulario')
+                ->withErrors('Debe iniciar una receta primero seleccionando sucursal y doctor.');
+        }
 
         foreach ($medicamentos as $medicamentoData) {
             $modelo->seleccionarMedicamento($medicamentoData['id'], $medicamentoData['cantidad']);
         }
 
         $this->guardarModelo($request, $modelo);
+        
+        // Verificar que se guardó correctamente
+        $receta = $modelo->getReceta();
+        \Log::info('Medicamentos guardados', [
+            'num_lineas' => $receta ? count($receta->getLineasRecetas()) : 0
+        ]);
 
-
-        return redirect()->route('receta.seleccionarMedicamentos')->with('success', 'Receta guardada correctamente.');
+        return redirect()->route('receta.revisar')->with('success', 'Medicamentos agregados correctamente.');
     }
 
 
@@ -88,11 +100,58 @@ class ControladorProcesarReceta
         return $total;
     }
 
+    /**
+     * Confirma la receta y guarda en base de datos.
+     * Limpia la sesión después de confirmar.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function confirmarReceta(Request $request)
     {
-        $modelo = $this->obtenerOInicializarModelo($request);
-        $modelo->confirmarReceta(); // Este método guarda en la base de datos
-        $request->session()->forget('proceso_receta'); // Limpiamos la sesión después de confirmar
+        try {
+            $modelo = $this->obtenerOInicializarModelo($request);
+            
+            // Verificar que existe una receta en el modelo
+            $receta = $modelo->getReceta();
+            if (!$receta) {
+                return back()->withErrors('No hay una receta para confirmar. Por favor inicie el proceso nuevamente.');
+            }
+            
+            // Verificar que la receta tenga los datos necesarios
+            if (!$receta->getSucursal()) {
+                return back()->withErrors('La receta no tiene una sucursal asignada.');
+            }
+            
+            if (empty($receta->getLineasRecetas())) {
+                return back()->withErrors('La receta no tiene medicamentos seleccionados.');
+            }
+            
+            // Log para debug
+            \Log::info('Iniciando confirmación de receta', [
+                'sucursal' => $receta->getSucursal()->getSucursalId(),
+                'num_lineas' => count($receta->getLineasRecetas())
+            ]);
+            
+            // Confirmar la receta y obtener el folio
+            $folio = $modelo->confirmarReceta();
+            
+            \Log::info('Receta confirmada exitosamente', ['folio' => $folio]);
+            
+            // Limpiar la sesión después de confirmar
+            $request->session()->forget('proceso_receta');
+            
+            // Redirigir con mensaje de éxito
+            return redirect()->route('receta.confirmacion', ['folio' => $folio])
+                ->with('success', "Receta confirmada exitosamente. Folio: {$folio}");
+                
+        } catch (\Exception $e) {
+            \Log::error('Error al confirmar receta', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return back()->withErrors('Error al confirmar la receta: ' . $e->getMessage());
+        }
     }
 
     public function cancelarReceta(Request $request)
@@ -163,9 +222,8 @@ class ControladorProcesarReceta
 
         // Partir el valor de sucursal_id en $sucursalId y $cadenaId
         list($sucursalId, $cadenaId) = explode(',', $datos['sucursal_id']);
-        $paciente = new \App\DomainModels\Paciente(0,"a","a","a","a","a","a",false, 0, null);
+        $paciente = new \App\DomainModels\Paciente(1,"Usuario","Prueba","Test","test@test.com","1234567890","password",true, 0, null);
         $modelo->iniciarPedido($paciente);
-        dump($sucursalId,$cadenaId);
         $modelo->seleccionarSucursal($sucursalId, $cadenaId, $datos['cedula'], $datos['fecha']);
 
         $this->guardarModelo($request, $modelo);
@@ -177,6 +235,49 @@ class ControladorProcesarReceta
         $modelo = $this->obtenerOInicializarModelo($request);
         $sucursales = $modelo->obtenerSucursales();
         return view('receta.formularioReceta', ['sucursales' => $sucursales]);
+    }
+
+    /**
+     * Muestra la receta para que el usuario la revise antes de confirmar
+     * 
+     * @param Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function revisarReceta(Request $request)
+    {
+        $modelo = $this->obtenerOInicializarModelo($request);
+        $receta = $modelo->getReceta();
+        
+        // Debug: verificar estado de la receta
+        \Log::info('Revisando receta', [
+            'receta_existe' => $receta !== null,
+            'num_lineas' => $receta ? count($receta->getLineasRecetas()) : 0,
+            'tiene_sucursal' => $receta && $receta->getSucursal() ? 'Si' : 'No'
+        ]);
+        
+        if (!$receta) {
+            return redirect()->route('receta.formulario')
+                ->withErrors('No hay una receta en proceso. Por favor inicie una nueva.');
+        }
+        
+        // Verificar que tenga líneas de medicamentos
+        if (empty($receta->getLineasRecetas())) {
+            return redirect()->route('receta.seleccionarMedicamentos')
+                ->withErrors('No hay medicamentos seleccionados. Por favor agregue al menos uno.');
+        }
+        
+        return view('receta.revisar', ['receta' => $receta]);
+    }
+
+    /**
+     * Muestra la confirmación de la receta guardada
+     * 
+     * @param int $folio
+     * @return \Illuminate\View\View
+     */
+    public function mostrarConfirmacion($folio)
+    {
+        return view('receta.confirmacion', ['folio' => $folio]);
     }
 
 }
