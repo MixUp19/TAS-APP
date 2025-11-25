@@ -32,23 +32,7 @@ class ControladorProcesarReceta
         $this->guardarModelo($request, $modelo);
     }
 
-    public function seleccionarMedicamento(Request $request)
-    {
-        $request->validate([
-            'medicamento_id' => 'required|integer',
-            'cantidad' => 'required|integer|min:1',
-        ]);
-
-        $medicamentoId = $request->input('medicamento_id');
-        $cantidad = $request->input('cantidad');
-
-        $modelo = $this->obtenerOInicializarModelo($request);
-        $modelo->seleccionarMedicamento($medicamentoId, $cantidad);
-        $this->guardarModelo($request, $modelo);
-        return back()->with('success', 'Medicamento añadido a la receta.');
-    }
-
-    public function guardarMedicamentos(Request $request)
+    public function seleccionarMedicamentos(Request $request)
     {
         $medicamentos = $request->input('medicamentos', []);
 
@@ -88,7 +72,6 @@ class ControladorProcesarReceta
     {
         $modelo = $this->obtenerOInicializarModelo($request);
         $total = $modelo->finalizarReceta();
-        // Al finalizar, guardamos en la BD (hecho dentro de confirmarReceta) y limpiamos la sesión.
         $request->session()->forget('proceso_receta');
         return $total;
     }
