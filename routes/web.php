@@ -45,3 +45,4 @@ Route::post('/receta/cancelar', [ControladorDevolverReceta::class, 'cancelarRece
 
 Route::get('/receta/devolver/{folio}', [ControladorDevolverReceta::class, 'obtenerReceta'])
     ->name('receta.devolver');
+

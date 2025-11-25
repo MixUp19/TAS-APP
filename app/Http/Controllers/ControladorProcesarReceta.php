@@ -145,13 +145,13 @@ class ControladorProcesarReceta
 
         if ($request->hasFile('recipe_image')) {
             $image = $request->file('recipe_image');
-            $path = $image->store('recipes', 'public'); 
+            $path = $image->store('recipes', 'public');
 
             $fullPath = storage_path('app/public/' . $path);
-            
+
             $lineas = $modelo->escanearReceta($fullPath);
             $this->guardarModelo($request, $modelo);
-            
+
             $lineasArray = array_map(function($linea) {
                 $med = $linea->getMedicamento();
                 return [
