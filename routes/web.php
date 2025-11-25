@@ -22,7 +22,6 @@ Route::post('/receta/confirmar', [ControladorProcesarReceta::class, 'confirmarRe
 // Ver confirmación exitosa
 Route::get('/receta/confirmacion/{folio}', [ControladorProcesarReceta::class, 'mostrarConfirmacion'])->name('receta.confirmacion');
 
-//rutas en fase de desarrollo
 Route::get('/receta/formulario', [ControladorProcesarReceta::class, 'obtenerSucursales'])
     ->name('receta.formulario');
 

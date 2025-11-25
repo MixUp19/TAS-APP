@@ -60,6 +60,7 @@ class MedicamentoRepository
     }
     public function obtenerMedicamentoPorId($id){
         $medicamentoModel = MedicamentoModel::where('MedicamentoID', '=', $id)->first();
+
         if ($medicamentoModel) {
             return $this->eloquentToDomain($medicamentoModel);
         }

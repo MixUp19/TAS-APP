@@ -144,6 +144,9 @@ alter table "Paciente" add column "PacienteActivo" BOOLEAN DEFAULT false;
 alter table "Paciente" add column "PacienteIntentosFallidos" INT DEFAULT 0;
 alter table "Paciente" add column "PacienteFechaUltimoIntento" DATE;
 
+alter table "Sucursal" alter column "SucursalLatitud" type numeric(11,8);
+alter table "Sucursal" alter column "SucursalLongitud" type numeric(11,8);
+
 Select * from "Estado";
 Select * from "Ciudad" where "EstadoID" = 25;
 
