@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Domain;
+
 use App\DomainModels\LineaReceta;
 use App\DomainModels\Receta;
 use App\DomainModels\Sucursal;
