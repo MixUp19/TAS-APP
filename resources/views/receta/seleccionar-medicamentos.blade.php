@@ -76,8 +76,9 @@
             </div>
         </div>
 
-        <div class="mt-3">
-            <button type="submit" class="btn btn-success">Guardar Receta</button>
+        <div class="mt-3 d-flex gap-3">
+            <button type="submit" class="btn btn-primary">Guardar Medicamentos</button>
+            <a href="{{ route('receta.revisar') }}" class="btn btn-success">Continuar a Revisar →</a>
         </div>
     </form>
 

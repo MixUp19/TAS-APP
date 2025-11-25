@@ -11,7 +11,12 @@ use PHPUnit\Framework\Attributes\Group;
 class SucursalRepository
 {
     public function getSucursalesPorCiudad($ciudadId):array {
-
+        $sucursales = SucursalModel::where('CiudadID', $ciudadId)->get();
+        $sucursalesDomain = [];
+        foreach ($sucursales as $sucursal) {
+            $sucursalesDomain[] = $this->eloquentToDomain($sucursal);
+        }
+        return $sucursalesDomain;
     }
 
     public function listarSucursales():array{
