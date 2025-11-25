@@ -15,7 +15,6 @@ class ControladorProcesarReceta
 
     private function obtenerOInicializarModelo(Request $request): ModeloProcesarReceta
     {
-
         return $request->session()->get('proceso_receta', new ModeloProcesarReceta());
     }
 
