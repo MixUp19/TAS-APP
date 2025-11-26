@@ -6,11 +6,13 @@ class DetalleLineaReceta
 {
     private Sucursal $sucursal;
     private int $cantidad;
+    private string $estatus;
 
-    public function __construct($sucursal, $cantidad)
+    public function __construct($sucursal, $cantidad, $estatus)
     {
         $this->sucursal = $sucursal;
         $this->cantidad = $cantidad;
+        $this->estatus = $estatus;
     }
     public function crearNotificacionDevolucion($medicamentoId){}
 
@@ -34,5 +36,14 @@ class DetalleLineaReceta
         $this->cantidad = $cantidad;
     }
 
+    public function getEstatus(): string
+    {
+        return $this->estatus;
+    }
+
+    public function setEstatus(string $estatus): void
+    {
+        $this->estatus = $estatus;
+    }
 
 }
