@@ -27,3 +27,8 @@ Route::get('/receta/formulario', [ControladorProcesarReceta::class, 'obtenerSucu
 
 Route::post('/receta/guardar-encabezado', [ControladorProcesarReceta::class, 'seleccionarSucursal'])
     ->name('receta.guardarEncabezado');
+Route::get('/recipes/upload', function () {
+    return view('subir_receta');
+})->name('recipes.upload');
+
+Route::post('/receta/escanear', [ControladorProcesarReceta::class, 'escanearReceta'])->name('receta.escanear');
