@@ -11,7 +11,7 @@ Route::get('/', function () {
 
 Route::get('/seleccionar-medicamentos', [ControladorProcesarReceta::class, 'obtenerMedicamentos'])->name('receta.seleccionarMedicamentos');
 
-Route::post('/seleccionar-medicamento', [ControladorProcesarReceta::class, 'seleccionarMedicamento'])->name('medicamentos.add');
+Route::post('/receta/guardarMedicamentos', [ControladorProcesarReceta::class, 'seleccionarMedicamentos'])->name('medicamentos.add');
 
 // Revisar receta antes de confirmar
 Route::get('/receta/revisar', [ControladorProcesarReceta::class, 'revisarReceta'])->name('receta.revisar');
