@@ -61,7 +61,7 @@ class ModeloProcesarReceta
         }
     }
 
-    public function finalizarReceta(): Receta
+    public function finalizarReceta(): int
     {
         $this->receta->setEstado("Completa");
         $total = $this->receta->getTotal();
