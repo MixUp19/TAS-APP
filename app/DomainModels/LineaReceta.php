@@ -24,7 +24,11 @@ class LineaReceta
         return $this->medicamento->getId();
     }
 
-    public function crearNotificaciones(){}
+    public function crearNotificaciones(): void{
+        foreach ($this->detalleLineaReceta as $dlr) {
+            $dlr->setEstatus("Por devolver");
+        }
+    }
 
     public function anadirSucursal($sucursal, $cantidad){
         $dlr = new DetalleLineaReceta($sucursal,$cantidad, "Por recoger");
