@@ -9,25 +9,15 @@ use Illuminate\Http\Request;
 
 class ControladorProcesarReceta
 {
-    // El constructor ya no necesita inyectar el modelo, ya que se gestionará por sesión.
     public function __construct()
     {
     }
 
-    /**
-     * Obtiene el modelo del proceso desde la sesión del usuario.
-     * Si no existe, crea uno nuevo y lo retorna.
-     */
     private function obtenerOInicializarModelo(Request $request): ModeloProcesarReceta
     {
-        // Usamos el helper session() para obtener/guardar datos en la sesión.
-        // 'proceso_receta' es la clave única para este proceso.
         return $request->session()->get('proceso_receta', new ModeloProcesarReceta());
     }
 
-    /**
-     * Guarda el estado actual del modelo en la sesión.
-     */
     private function guardarModelo(Request $request, ModeloProcesarReceta $modelo): void
     {
         $request->session()->put('proceso_receta', $modelo);
@@ -38,7 +28,6 @@ class ControladorProcesarReceta
         $modelo = $this->obtenerOInicializarModelo($request);
         $modelo->iniciarPedido($paciente);
         $this->guardarModelo($request, $modelo);
-        // Aquí podrías redirigir a la siguiente vista, ej: seleccionar sucursal
     }
 
     public function seleccionarMedicamento(Request $request)
