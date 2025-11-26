@@ -165,3 +165,7 @@ INSERT INTO "Medicamentos" ("MedicamentoNombre", "MedicamentoPrecio", "Medicamen
 ('Atorvastatina', 180.00, 'Atorvastatina', 'mg', '20 mg, 30 tabletas');
 
 select * from "Sucursal";
+
+select * from "Receta";
+
+ALTER TABLE "Receta" ADD COLUMN "RecetaEstado" varchar(10) default 'Pendiente';

@@ -11,7 +11,7 @@ class Receta
     private Sucursal $sucursal;
     private string $cedulaDoctor;
     private Carbon $fecha;
-    private string $estado;
+    private ?string $estado;
     private array $lineasRecetas;
     public function __construct($paciente){
         $this->paciente = $paciente;
@@ -21,7 +21,7 @@ class Receta
         $lr = new LineaReceta($med,$cantidad);
         $this->lineasRecetas[] = $lr;
     }
-    public function getTotal(){
+    public function getTotal(): float{
         $total = 0;
         foreach($this->lineasRecetas as $lr){
             $total += $lr->getSubtotal();
@@ -87,7 +87,7 @@ class Receta
         $this->fecha = Date::parse($fecha);
     }
 
-    public function getEstado(): string
+    public function getEstado(): ?string
     {
         return $this->estado;
     }
