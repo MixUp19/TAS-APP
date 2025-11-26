@@ -9,7 +9,7 @@ use App\DomainModels\Sucursal;
 use App\DomainModels\Paciente;
 use App\DomainModels\LineaReceta;
 use App\DomainModels\DetalleLineaReceta;
-use App\DomainModels\Receta as RecetaDomain;
+use App\DomainModels\Receta;
 use Illuminate\Support\Facades\DB;
 
 
@@ -61,6 +61,7 @@ class RecetaRepository
         $receta->setCedulaDoctor($recetaModel->CedulaDoctor);
         $receta->setFecha($recetaModel->RecetaFecha->format('Y-m-d'));
         $receta->setEstado($recetaModel->RecetaEstado);
+        $receta->setFolio($recetaModel->RecetaFolio);
 
 
         foreach ($recetaModel->lineas as $lineaModel) {
@@ -95,10 +96,10 @@ class RecetaRepository
             $detalleModel->CadenaID
         );
 
-        return new DetalleLineaReceta($sucursal, $detalleModel->DLRCantidad);
+        return new DetalleLineaReceta($sucursal, $detalleModel->DLRCantidad, $detalleModel->DLREstatus);
     }
 
-    public function guardarReceta(RecetaDomain $receta): int
+    public function guardarReceta(Receta $receta): int
     {
         return DB::transaction(function () use ($receta) {
             // 1. Guardar el encabezado de la receta
@@ -137,6 +138,71 @@ class RecetaRepository
                         'DLRCantidad' => $detalle->getCantidad(),
                         'DLREstatus' => $detalle->getEstatus(), // Estado inicial
                     ]);
+                }
+            }
+
+            return $folio;
+        });
+    }
+
+    /**
+     * Actualiza una receta existente
+     *
+     * @param Receta $receta
+     * @return int
+     */
+    public function actualizarReceta(Receta $receta): int
+    {
+        return DB::transaction(function () use ($receta) {
+            $folio = $receta->getFolio();
+
+            if (!$folio) {
+                throw new \InvalidArgumentException('La receta debe tener un folio para poder actualizarla');
+            }
+
+            // 1. Actualizar el encabezado de la receta
+            $recetaModel = RecetaModel::findOrFail($folio);
+            $recetaModel->update([
+                'CedulaDoctor' => $receta->getCedulaDoctor(),
+                'RecetaFecha' => $receta->getFecha()->format('Y-m-d'),
+                'PacienteID' => $receta->getPaciente()->getId(),
+                'CadenaID' => $receta->getSucursal()->getCadena()->getCadenaId(),
+                'SucursalID' => $receta->getSucursal()->getSucursalId(),
+                'RecetaEstado' => $receta->getEstado(),
+            ]);
+
+            // 2. Actualizar las líneas de medicamentos
+            foreach ($receta->getLineasRecetas() as $lineaReceta) {
+                $medicamento = $lineaReceta->getMedicamento();
+
+                // Actualizar o crear línea de receta
+                LineaRecetaModel::updateOrCreate(
+                    [
+                        'RecetaFolio' => $folio,
+                        'MedicamentoID' => $medicamento->getId(),
+                    ],
+                    [
+                        'LRCantidad' => $lineaReceta->getCantidad(),
+                        'LRPrecio' => $medicamento->getPrecio(),
+                    ]
+                );
+
+                // 3. Actualizar los detalles de la línea (distribución por sucursales)
+                foreach ($lineaReceta->getDetalleLineaReceta() as $detalle) {
+                    $sucursal = $detalle->getSucursal();
+
+                    DetalleLineaRecetaModel::updateOrCreate(
+                        [
+                            'RecetaFolio' => $folio,
+                            'MedicamentoID' => $medicamento->getId(),
+                            'SucursalID' => $sucursal->getSucursalId(),
+                            'CadenaID' => $sucursal->getCadena()->getCadenaId(),
+                        ],
+                        [
+                            'DLRCantidad' => $detalle->getCantidad(),
+                            'DLREstatus' => $detalle->getEstatus(),
+                        ]
+                    );
                 }
             }
 

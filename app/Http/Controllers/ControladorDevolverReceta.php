@@ -32,4 +32,9 @@ class ControladorDevolverReceta
             'recetas' => $recetas
         ]);
     }
+    public function cancelarReceta(Request $request){
+        $modelo = $this->obtenerOInicializarModelo($request);
+        $modelo->cancelarPedido($request->input('folio'));
+        $modelo->confirmarCancelacion();
+    }
 }
