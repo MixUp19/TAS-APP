@@ -5,11 +5,11 @@ namespace App\Providers;
 use App\Models\Receta as RecetaModel;
 use App\Models\LineaReceta as LineaRecetaModel;
 use App\Models\DetalleLineaReceta as DetalleLineaRecetaModel;
-use App\DomainModels\Receta;
 use App\DomainModels\Sucursal;
 use App\DomainModels\Paciente;
 use App\DomainModels\LineaReceta;
 use App\DomainModels\DetalleLineaReceta;
+use App\DomainModels\Receta as RecetaDomain;
 use Illuminate\Support\Facades\DB;
 
 
