@@ -3,58 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Domain\ModeloProcesarReceta;
-use App\DomainModels\Receta;
-use App\Models\Paciente; // Usamos el modelo de Eloquent
 use Illuminate\Http\Request;
 
 class ControladorProcesarReceta
 {
-    // El constructor ya no necesita inyectar el modelo, ya que se gestionará por sesión.
-    public function __construct()
-    {
-    }
-
-    /**
-     * Obtiene el modelo del proceso desde la sesión del usuario.
-     * Si no existe, crea uno nuevo y lo retorna.
-     */
     private function obtenerOInicializarModelo(Request $request): ModeloProcesarReceta
     {
-        // Usamos el helper session() para obtener/guardar datos en la sesión.
-        // 'proceso_receta' es la clave única para este proceso.
         return $request->session()->get('proceso_receta', new ModeloProcesarReceta());
     }
 
-    /**
-     * Guarda el estado actual del modelo en la sesión.
-     */
     private function guardarModelo(Request $request, ModeloProcesarReceta $modelo): void
     {
         $request->session()->put('proceso_receta', $modelo);
     }
 
-    public function iniciarPedido(Request $request, Paciente $paciente)
-    {
+    public function iniciarPedido(Request $request, $paciente){
         $modelo = $this->obtenerOInicializarModelo($request);
         $modelo->iniciarPedido($paciente);
         $this->guardarModelo($request, $modelo);
-        // Aquí podrías redirigir a la siguiente vista, ej: seleccionar sucursal
-    }
-
-    public function seleccionarMedicamento(Request $request)
-    {
-        $request->validate([
-            'medicamento_id' => 'required|integer',
-            'cantidad' => 'required|integer|min:1',
-        ]);
-
-        $medicamentoId = $request->input('medicamento_id');
-        $cantidad = $request->input('cantidad');
-
-        $modelo = $this->obtenerOInicializarModelo($request);
-        $modelo->seleccionarMedicamento($medicamentoId, $cantidad);
-        $this->guardarModelo($request, $modelo);
-        return back()->with('success', 'Medicamento añadido a la receta.');
     }
 
     public function guardarMedicamentos(Request $request)
@@ -87,23 +53,17 @@ class ControladorProcesarReceta
         $request->session()->forget('proceso_receta');
         return $total;
     }
-
-    public function confirmarReceta(Request $request)
-    {
+    public function confirmarReceta(Request $request){
         $modelo = $this->obtenerOInicializarModelo($request);
-        $modelo->confirmarReceta(); // Este método guarda en la base de datos
-        $request->session()->forget('proceso_receta'); // Limpiamos la sesión después de confirmar
+        $modelo->confirmarReceta();
+        $request->session()->forget('proceso_receta');
     }
-
-    public function cancelarReceta(Request $request)
-    {
+    public function cancelarReceta(Request $request){
         $modelo = $this->obtenerOInicializarModelo($request);
         $modelo->cancelarReceta();
-        $request->session()->forget('proceso_receta'); // Limpiamos la sesión
+        $request->session()->forget('proceso_receta');
     }
-
-    public function cambiarSucursal(Request $request, $sucursal)
-    {
+    public function cambiarSucursal(Request $request, $sucursal){
         $modelo = $this->obtenerOInicializarModelo($request);
         $modelo->cambiarSucursal($sucursal);
         $this->guardarModelo($request, $modelo);
@@ -122,12 +82,6 @@ class ControladorProcesarReceta
         $this->guardarModelo($request, $modelo);
     }
 
-    public function escanearReceta(Request $request, $imagen)
-    {
-        $modelo = $this->obtenerOInicializarModelo($request);
-        $modelo->escanearReceta($imagen);
-        $this->guardarModelo($request, $modelo);
-    }
 
     public function obtenerMedicamentos(Request $request)
     {
@@ -148,9 +102,6 @@ class ControladorProcesarReceta
         $modelo->confirmarMedicamento($id);
         $this->guardarModelo($request, $modelo);
     }
-
-
-
     //funcion en dev para guardar el encabezado de la receta (NO final)
     public function seleccionarSucursal(Request $request){
         $datos = $request->validate([
@@ -177,6 +128,47 @@ class ControladorProcesarReceta
         $modelo = $this->obtenerOInicializarModelo($request);
         $sucursales = $modelo->obtenerSucursales();
         return view('receta.formularioReceta', ['sucursales' => $sucursales]);
+    }
+
+    public function escanearReceta(Request $request){
+        $modelo = $this->obtenerOInicializarModelo($request);
+        $request->validate([
+            'recipe_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('recipe_image')) {
+            $image = $request->file('recipe_image');
+            $path = $image->store('recipes', 'public'); 
+
+            $fullPath = storage_path('app/public/' . $path);
+            
+            $lineas = $modelo->escanearReceta($fullPath);
+            $this->guardarModelo($request, $modelo);
+            
+            $lineasArray = array_map(function($linea) {
+                $med = $linea->getMedicamento();
+                return [
+                    'medicamento' => [
+                        'id' => $med->getId(),
+                        'nombre' => $med->getNombre(),
+                        'compuesto' => $med->getCompuestoActivo(),
+                        'precio' => $med->getPrecio(),
+                        'contenido' => $med->getContenido(),
+                        'unidad' => $med->getUnidad(),
+                    ],
+                    'cantidad' => $linea->getCantidad(),
+                ];
+            }, $lineas);
+
+            return response()->json([
+                'success' => true,
+                'medicamentos_detectados' => $lineasArray
+            ]);
+        }
+
+        $this->guardarModelo($request, $modelo);
+
+        return back()->withErrors(['recipe_image' => 'Error uploading file']);
     }
 
 }
