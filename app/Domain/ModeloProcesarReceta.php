@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Domain;
-
 use App\DomainModels\LineaReceta;
 use App\DomainModels\Receta;
 use App\DomainModels\Sucursal;
@@ -19,23 +18,15 @@ class ModeloProcesarReceta
     private ServicioOCR $servicioOCR;
     private LocalizadorService $localizadorService;
     private MedicamentoRepository $medicamentoRepository;
-    private RecetaRepository $recetaRepository;
-
+    private \App\Providers\RecetaRepository $recetaRepository;
     public function __construct() {
-        $this->sucursalRepository = app(SucursalRepository::class);
-        $this->servicioOCR = app(ServicioOCR::class);
-        $this->localizadorService = app(LocalizadorService::class);
-        $this->medicamentoRepository = app(MedicamentoRepository::class);
-        $this->recetaRepository = app(RecetaRepository::class);
+        $this->servicioOCR = new ServicioOCR();
+        $this->medicamentoRepository = new MedicamentoRepository(); 
+        $this->sucursalRepository = new SucursalRepository();
+        $this->localizadorService = new LocalizadorService();
+        $this->recetaRepository = new \App\Providers\RecetaRepository();
     }
-
-    public function obtenerMedicamentos()
-    {
-        return $this->medicamentoRepository->obtenerMedicamentos();
-    }
-
-    public function iniciarPedido($paciente)
-    {
+    public function iniciarPedido($paciente){
         $this->receta = new Receta($paciente);
     }
 
@@ -112,13 +103,25 @@ class ModeloProcesarReceta
 
     public function escanearReceta($imagen)
     {
-        $nombresMedicamentos = $this->servicioOCR->escanearReceta($imagen);
-        $lineasDeMedicamentos = [];
-        foreach ($nombresMedicamentos as $nombreMedicamento) {
-            $medicamento = $this->medicamentoRepository->obtenerMedicamentoPorNombre($nombreMedicamento);
-            $lineasDeMedicamentos[] = new LineaReceta($medicamento, 1);
+        $medicamentos = $this->medicamentoRepository->obtenerMedicamentos();
+        $mapaMedicamentos = [];
+
+        foreach ($medicamentos as $med) {
+            $mapaMedicamentos[strtolower($med->getNombre())] = $med;
         }
-        return $lineasDeMedicamentos;
+
+        $palabras = $this->servicioOCR->escanearReceta($imagen);
+
+        $lineasReceta  = [];
+        foreach ($palabras as $palabra) {
+            $palabraLimpia = strtolower(trim($palabra));
+            if (isset($mapaMedicamentos[$palabraLimpia])) {
+                $medicamento = $mapaMedicamentos[$palabraLimpia];
+                $lineaReceta = new LineaReceta($medicamento, 1);
+                $lineasReceta[] = $lineaReceta;
+            }
+        }
+        return $lineasReceta;
     }
 
 
@@ -127,11 +130,15 @@ class ModeloProcesarReceta
         // Obtiene todas las sucursales desde el repositorio
         return $this->sucursalRepository->listarSucursales();
     }
-
-
+    
     public function obtenerSucursales(): array
     {
         return $this->sucursalRepository->listarSucursales();
+    }
+
+    public function obtenerMedicamentos()
+    {
+        return $this->medicamentoRepository->obtenerMedicamentos();
     }
 
 
