@@ -108,6 +108,7 @@ class RecetaRepository
                 'PacienteID' => $receta->getPaciente()->getId(),
                 'CadenaID' => $receta->getSucursal()->getCadena()->getCadenaId(),
                 'SucursalID' => $receta->getSucursal()->getSucursalId(),
+                'RecetaEstado' => $receta->getEstado(),
             ]);
 
             $folio = $recetaModel->RecetaFolio;
@@ -134,7 +135,7 @@ class RecetaRepository
                         'SucursalID' => $sucursal->getSucursalId(),
                         'CadenaID' => $sucursal->getCadena()->getCadenaId(),
                         'DLRCantidad' => $detalle->getCantidad(),
-                        'DLREstatus' => 'Pendiente', // Estado inicial
+                        'DLREstatus' => $detalle->getEstatus(), // Estado inicial
                     ]);
                 }
             }
