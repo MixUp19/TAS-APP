@@ -10,7 +10,6 @@ use App\DomainModels\Sucursal;
 use App\DomainModels\Paciente;
 use App\DomainModels\LineaReceta;
 use App\DomainModels\DetalleLineaReceta;
-use App\DomainModels\Receta as RecetaDomain;
 use Illuminate\Support\Facades\DB;
 
 
