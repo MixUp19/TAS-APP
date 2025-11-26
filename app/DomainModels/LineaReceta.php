@@ -27,7 +27,7 @@ class LineaReceta
     public function crearNotificaciones(){}
 
     public function anadirSucursal($sucursal, $cantidad){
-        $dlr = new DetalleLineaReceta($sucursal,$cantidad);
+        $dlr = new DetalleLineaReceta($sucursal,$cantidad, "Por recoger");
         $this->detalleLineaReceta[] = $dlr;
     }
 
