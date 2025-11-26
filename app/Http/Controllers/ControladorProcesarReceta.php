@@ -162,11 +162,45 @@ class ControladorProcesarReceta
         $this->guardarModelo($request, $modelo);
     }
 
-    public function escanearReceta(Request $request, $imagen)
-    {
+    public function escanearReceta(Request $request){
         $modelo = $this->obtenerOInicializarModelo($request);
-        $modelo->escanearReceta($imagen);
+        $request->validate([
+            'recipe_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('recipe_image')) {
+            $image = $request->file('recipe_image');
+            $path = $image->store('recipes', 'public'); 
+
+            $fullPath = storage_path('app/public/' . $path);
+            
+            $lineas = $modelo->escanearReceta($fullPath);
+            $this->guardarModelo($request, $modelo);
+            
+            $lineasArray = array_map(function($linea) {
+                $med = $linea->getMedicamento();
+                return [
+                    'medicamento' => [
+                        'id' => $med->getId(),
+                        'nombre' => $med->getNombre(),
+                        'compuesto' => $med->getCompuestoActivo(),
+                        'precio' => $med->getPrecio(),
+                        'contenido' => $med->getContenido(),
+                        'unidad' => $med->getUnidad(),
+                    ],
+                    'cantidad' => $linea->getCantidad(),
+                ];
+            }, $lineas);
+
+            return response()->json([
+                'success' => true,
+                'medicamentos_detectados' => $lineasArray
+            ]);
+        }
+
         $this->guardarModelo($request, $modelo);
+
+        return back()->withErrors(['recipe_image' => 'Error uploading file']);
     }
 
     public function obtenerMedicamentos(Request $request)
