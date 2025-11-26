@@ -18,13 +18,13 @@ class ModeloProcesarReceta
     private ServicioOCR $servicioOCR;
     private LocalizadorService $localizadorService;
     private MedicamentoRepository $medicamentoRepository;
-    private \App\Providers\RecetaRepository $recetaRepository;
+    private RecetaRepository $recetaRepository;
     public function __construct() {
-        $this->servicioOCR = new ServicioOCR();
-        $this->medicamentoRepository = new MedicamentoRepository(); 
-        $this->sucursalRepository = new SucursalRepository();
-        $this->localizadorService = new LocalizadorService();
-        $this->recetaRepository = new \App\Providers\RecetaRepository();
+        $this->servicioOCR = app(ServicioOCR::class);
+        $this->medicamentoRepository = app(MedicamentoRepository::class);
+        $this->sucursalRepository = app(SucursalRepository::class);
+        $this->localizadorService = app(LocalizadorService::class);
+        $this->recetaRepository = app(RecetaRepository::class);
     }
     public function iniciarPedido($paciente){
         $this->receta = new Receta($paciente);
@@ -126,7 +126,7 @@ class ModeloProcesarReceta
     public function getReceta(): Receta{
         return $this->receta;
     }
-    
+
     public function obtenerSucursales(): array
     {
         return $this->sucursalRepository->listarSucursales();
