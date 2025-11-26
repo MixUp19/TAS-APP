@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ControladorProcesarReceta;
+use App\Http\Controllers\ControladorDevolverReceta;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
@@ -32,3 +33,8 @@ Route::get('/recipes/upload', function () {
 })->name('recipes.upload');
 
 Route::post('/receta/escanear', [ControladorProcesarReceta::class, 'escanearReceta'])->name('receta.escanear');
+
+// Ruta para listar recetas de una sucursal
+Route::get('/receta/indice-recetas', [ControladorDevolverReceta::class, 'obtenerRecetas'])
+    ->name('receta.indiceRecetas');
+

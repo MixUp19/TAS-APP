@@ -24,6 +24,7 @@ class Receta extends Model
     ];
 
     protected $casts = [
+        'RecetaEstado' =>'string',
         'RecetaFolio' => 'integer',
         'RecetaFecha' => 'date',
         'PacienteID' => 'integer',
@@ -45,7 +46,6 @@ class Receta extends Model
         return $this->hasMany(LineaReceta::class, 'RecetaFolio', 'RecetaFolio');
     }
 
-    // Helper para obtener la sucursal asociada (clave compuesta SucursalID+CadenaID)
     public function sucursal()
     {
         return Sucursal::findByKeys($this->SucursalID, $this->CadenaID);

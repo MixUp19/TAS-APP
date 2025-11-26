@@ -13,17 +13,17 @@ class LineaReceta
         $this->cantidad = $cantidad;
         $this->detalleLineaReceta = [];
     }
-    
+
     public function getSubtotal(): float
     {
         return $this->cantidad * $this->medicamento->getPrecio();
     }
-    
+
     public function getMedicamentoId(): int
     {
         return $this->medicamento->getId();
     }
-    
+
     public function crearNotificaciones(){}
 
     public function anadirSucursal($sucursal, $cantidad){
