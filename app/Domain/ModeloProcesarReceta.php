@@ -105,7 +105,7 @@ class ModeloProcesarReceta
     public function confirmarMedicamento($lineasDeMedicamento)
     {
         foreach ($lineasDeMedicamento as $linea) {
-            $this->receta->anadirLinea($linea->getMedicamento(), $linea->getCantidad());
+            $this->receta->anadirLineaLr($linea);
         }
 
     }

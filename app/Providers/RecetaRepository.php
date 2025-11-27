@@ -235,6 +235,6 @@ class RecetaRepository
             return null;
         }
 
-        return $this->eloquentToDomain($recetaModel);
+        return $this->eloquentADominio($recetaModel);
     }
 }

@@ -52,7 +52,6 @@ class Receta
         }
     }
 
-
     public function getPaciente(): Paciente
     {
         return $this->paciente;
