@@ -10,14 +10,16 @@ use App\Providers\MedicamentoRepository;
 use App\Providers\RecetaRepository;
 use App\Providers\ServicioOCR;
 use App\Providers\SucursalRepository;
+use App\Providers\TSPService;
 use Illuminate\Database\Eloquent\Collection;
-
+use Illuminate\Support\Facades\Log;
 class ModeloProcesarReceta
 {
     private ?Receta $receta = null;
     private SucursalRepository $sucursalRepository;
     private ServicioOCR $servicioOCR;
     private LocalizadorService $localizadorService;
+    private TSPService $tspService;
     private MedicamentoRepository $medicamentoRepository;
     private RecetaRepository $recetaRepository;
     public function __construct() {
@@ -25,8 +27,20 @@ class ModeloProcesarReceta
         $this->medicamentoRepository = app(MedicamentoRepository::class);
         $this->sucursalRepository = app(SucursalRepository::class);
         $this->localizadorService = app(LocalizadorService::class);
+        $this->tspService = app(TSPService::class);
         $this->recetaRepository = app(RecetaRepository::class);
     }
+
+    public function __wakeup()
+    {
+        $this->servicioOCR = app(ServicioOCR::class);
+        $this->medicamentoRepository = app(MedicamentoRepository::class);
+        $this->sucursalRepository = app(SucursalRepository::class);
+        $this->localizadorService = app(LocalizadorService::class);
+        $this->tspService = app(TSPService::class);
+        $this->recetaRepository = app(RecetaRepository::class);
+    }
+
     public function iniciarPedido($paciente){
         $this->receta = new Receta($paciente);
     }
@@ -58,10 +72,17 @@ class ModeloProcesarReceta
     public function confirmarReceta(): int
     {
         $lineas = $this->receta->getLineasRecetas();
+
         $sucursal = $this->receta->getSucursal();
+
         $sucursales = $this->sucursalRepository->getSucursalesPorCiudad($sucursal->getCiudadId());
+
         $sucursales = $this->localizadorService->localizarSucursal($sucursal, $sucursales);
+
         $lineas = $this->medicamentoRepository->buscarMedicamentosEnSucursales($sucursal, $sucursales, $lineas);
+
+        $lineas = $this->tspService->optimizarRuta($sucursal, $lineas);
+        $this->receta->setLineasRecetas($lineas);
         $folio = $this->recetaRepository->guardarReceta($this->receta);
 
         return $folio;

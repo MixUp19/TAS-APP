@@ -33,12 +33,6 @@ Route::post('/receta/escanear', [ControladorProcesarReceta::class, 'escanearRece
 Route::get('/receta/indice-recetas', [ControladorDevolverReceta::class, 'obtenerRecetas'])
     ->name('receta.indiceRecetas');
 
-Route::get('/receta/detalle/{folio}', [ControladorDevolverReceta::class, 'obtenerDetalleReceta'])
-    ->name('receta.detalle');
-
-Route::post('/receta/cambiar-estado', [ControladorDevolverReceta::class, 'cambiarEstado'])
-    ->name('receta.cambiarEstado');
-
-Route::post('/receta/cancelar', [ControladorDevolverReceta::class, 'cancelarReceta'])
-    ->name('receta.cancelar');
-
+Route::get('/receta/devolver/{folio}', [ControladorDevolverReceta::class, 'obtenerReceta'])
+    ->name('receta.devolver');
+    

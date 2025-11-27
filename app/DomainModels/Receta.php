@@ -14,6 +14,7 @@ class Receta
     private Carbon $fecha;
     private ?string $estado;
     private array $lineasRecetas;
+    private int $folio;
     public function __construct($paciente){
         $this->paciente = $paciente;
         $this->lineasRecetas = [];
@@ -111,16 +112,12 @@ class Receta
     {
         $this->lineasRecetas = $lineasRecetas;
     }
-
-    public function getFolio(): ?int
+    public function getFolio(): int
     {
         return $this->folio;
     }
-
-    public function setFolio(?int $folio): void
+    public function setFolio(int $folio): void
     {
         $this->folio = $folio;
     }
-
-
 }

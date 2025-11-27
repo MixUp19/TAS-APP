@@ -63,11 +63,20 @@ class RecetaRepository
         $receta->setEstado($recetaModel->RecetaEstado);
         $receta->setFolio($recetaModel->RecetaFolio);
 
+        \Log::info('Mapeando receta', [
+            'folio' => $recetaModel->RecetaFolio,
+            'lineas_eloquent' => $recetaModel->lineas->count()
+        ]);
 
         foreach ($recetaModel->lineas as $lineaModel) {
             $lineaReceta = $this->mapearLineaReceta($lineaModel);
             $receta->anadirLineaLr($lineaReceta);
         }
+        
+        \Log::info('Receta mapeada', [
+            'folio' => $recetaModel->RecetaFolio,
+            'lineas_domain' => count($receta->getLineasRecetas())
+        ]);
 
         return $receta;
     }
@@ -77,11 +86,26 @@ class RecetaRepository
         $medicamento = $this->medicamentoRepository->obtenerMedicamentoPorId($lineaModel->MedicamentoID);
         $lineaReceta = new LineaReceta($medicamento, $lineaModel->LRCantidad);
 
-        $detalles = $lineaModel->detalles();
-        foreach ($detalles as $detalleModel) {
+        // Cargar detalles manualmente debido a la clave compuesta
+        $detallesModels = \App\Models\DetalleLineaReceta::where('RecetaFolio', $lineaModel->RecetaFolio)
+            ->where('MedicamentoID', $lineaModel->MedicamentoID)
+            ->with('sucursal.cadena')
+            ->get();
+
+        \Log::info('Mapeando línea', [
+            'medicamento_id' => $lineaModel->MedicamentoID,
+            'detalles_count' => $detallesModels->count()
+        ]);
+
+        foreach ($detallesModels as $detalleModel) {
             $detalleLineaReceta = $this->mapearDetalleLineaReceta($detalleModel);
             $lineaReceta->anadirDetalleLineaReceta($detalleLineaReceta);
         }
+        
+        \Log::info('Línea mapeada', [
+            'medicamento_id' => $lineaModel->MedicamentoID,
+            'detalles_domain_count' => count($lineaReceta->getDetalleLineaReceta())
+        ]);
 
         return $lineaReceta;
     }
@@ -141,76 +165,21 @@ class RecetaRepository
         });
     }
 
-
-    public function actualizarReceta(Receta $receta): int
-    {
-        return DB::transaction(function () use ($receta) {
-            $folio = $receta->getFolio();
-
-            if (!$folio) {
-                throw new \InvalidArgumentException('La receta debe tener un folio para poder actualizarla');
-            }
-
-
-            $recetaModel = RecetaModel::findOrFail($folio);
-            $recetaModel->update([
-                'CedulaDoctor' => $receta->getCedulaDoctor(),
-                'RecetaFecha' => $receta->getFecha()->format('Y-m-d'),
-                'PacienteID' => $receta->getPaciente()->getId(),
-                'CadenaID' => $receta->getSucursal()->getCadena()->getCadenaId(),
-                'SucursalID' => $receta->getSucursal()->getSucursalId(),
-                'RecetaEstado' => $receta->getEstado(),
-            ]);
-
-
-            foreach ($receta->getLineasRecetas() as $lineaReceta) {
-                $medicamento = $lineaReceta->getMedicamento();
-
-
-                LineaRecetaModel::updateOrCreate(
-                    [
-                        'RecetaFolio' => $folio,
-                        'MedicamentoID' => $medicamento->getId(),
-                    ],
-                    [
-                        'LRCantidad' => $lineaReceta->getCantidad(),
-                        'LRPrecio' => $medicamento->getPrecio(),
-                    ]
-                );
-
-
-                foreach ($lineaReceta->getDetalleLineaReceta() as $detalle) {
-                    $sucursal = $detalle->getSucursal();
-
-                    DetalleLineaRecetaModel::updateOrCreate(
-                        [
-                            'RecetaFolio' => $folio,
-                            'MedicamentoID' => $medicamento->getId(),
-                            'SucursalID' => $sucursal->getSucursalId(),
-                            'CadenaID' => $sucursal->getCadena()->getCadenaId(),
-                        ],
-                        [
-                            'DLRCantidad' => $detalle->getCantidad(),
-                            'DLREstatus' => $detalle->getEstatus(),
-                        ]
-                    );
-                }
-            }
-
-            return $folio;
-        });
-    }
-
-
+    /**
+     * Obtiene una receta por su folio (para futuras consultas)
+     *
+     * @param int $folio
+     * @return RecetaModel|null
+     */
     public function obtenerRecetaPorFolio(int $folio): ?Receta
     {
-        $recetaModel = RecetaModel::with(['lineas.medicamento', 'paciente'])
+        $recetaModel = RecetaModel::with(['lineas.medicamento', 'paciente', 'sucursal.cadena'])
             ->find($folio);
-
+        
         if (!$recetaModel) {
             return null;
         }
 
-        return $this->eloquentADominio($recetaModel);
+        return $this->eloquentToDomain($recetaModel);
     }
 }
