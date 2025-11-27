@@ -211,14 +211,20 @@ class RecetaRepository
     }
 
     /**
-     * Obtiene una receta por su folio (para futuras consultas)
-     *
+    /**
+     * Obtiene una receta por su folio
      * @param int $folio
-     * @return RecetaModel|null
+     * @return Receta|null
      */
-    public function obtenerRecetaPorFolio(int $folio): ?RecetaModel
+    public function obtenerRecetaPorFolio(int $folio): ?Receta
     {
-        return RecetaModel::with(['lineas.medicamento', 'paciente'])
+        $recetaModel = RecetaModel::with(['lineas.medicamento', 'paciente'])
             ->find($folio);
+
+        if (!$recetaModel) {
+            return null;
+        }
+
+        return $this->eloquentToDomain($recetaModel);
     }
 }

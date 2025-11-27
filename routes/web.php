@@ -37,3 +37,15 @@ Route::post('/receta/escanear', [ControladorProcesarReceta::class, 'escanearRece
 Route::get('/receta/indice-recetas', [ControladorDevolverReceta::class, 'obtenerRecetas'])
     ->name('receta.indiceRecetas');
 
+// Ruta para obtener detalle de una receta específica
+Route::get('/receta/detalle/{folio}', [ControladorDevolverReceta::class, 'obtenerDetalleReceta'])
+    ->name('receta.detalle');
+
+// Ruta para cambiar estado de una receta
+Route::post('/receta/cambiar-estado', [ControladorDevolverReceta::class, 'cambiarEstado'])
+    ->name('receta.cambiarEstado');
+
+// Ruta para cancelar/devolver receta
+Route::post('/receta/cancelar', [ControladorDevolverReceta::class, 'cancelarReceta'])
+    ->name('receta.cancelar');
+
