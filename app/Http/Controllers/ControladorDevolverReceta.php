@@ -8,17 +8,17 @@ use Illuminate\Http\Request;
 class ControladorDevolverReceta
 {
     public function __construct()
-    {
+    { 
     }
 
     private function obtenerOInicializarModelo(Request $request): ModeloDevolverReceta
     {
-        return $request->session()->get('proceso_receta', new ModeloDevolverReceta());
+        return $request->session()->get('devolver_receta', new ModeloDevolverReceta());
     }
 
     private function guardarModelo(Request $request, ModeloDevolverReceta $modelo): void
     {
-        $request->session()->put('proceso_receta', $modelo);
+        $request->session()->put('devolver_receta', $modelo);
     }
 
     public function obtenerRecetas(Request $request)
@@ -30,6 +30,22 @@ class ControladorDevolverReceta
 
         return view('receta.indice-recetas', [
             'recetas' => $recetas
+        ]);
+    }
+
+    public function obtenerReceta(Request $request, $folio)
+    {
+        $modelo = $this->obtenerOInicializarModelo($request);
+
+        $receta = $modelo->obtenerReceta($folio);
+        
+        \Log::info('Receta obtenida', [
+            'folio' => $folio,
+            'lineas_count' => $receta ? count($receta->getLineasRecetas()) : 0
+        ]);
+
+        return view('receta.receta', [
+            'receta' => $receta
         ]);
     }
 }

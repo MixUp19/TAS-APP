@@ -37,3 +37,6 @@ Route::post('/receta/escanear', [ControladorProcesarReceta::class, 'escanearRece
 Route::get('/receta/indice-recetas', [ControladorDevolverReceta::class, 'obtenerRecetas'])
     ->name('receta.indiceRecetas');
 
+Route::get('/receta/devolver/{folio}', [ControladorDevolverReceta::class, 'obtenerReceta'])
+    ->name('receta.devolver');
+    
