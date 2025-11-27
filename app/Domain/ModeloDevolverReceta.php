@@ -19,10 +19,10 @@ class ModeloDevolverReceta
         $this->sucursalRepository = app(SucursalRepository::class);
     }
 
-    public function cancelarPedido($folio)
+    public function cancelarReceta($folio): void
     {
         $this->recetaPorCancelar = $this->recetaRepository->obtenerRecetaPorFolio($folio);
-        $this->recetaPorCancelar->setEstado("Cancelada por no recoger");
+        $this->recetaPorCancelar->setEstado("Cancelada");
     }
 
     public function confirmarCancelacion()

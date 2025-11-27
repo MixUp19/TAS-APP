@@ -35,6 +35,10 @@ class LineaReceta
         $this->detalleLineaReceta[] = $dlr;
     }
 
+    public function anadirDetalleLineaReceta(DetalleLineaReceta $detalleLineaReceta){
+        $this->detalleLineaReceta[] = $detalleLineaReceta;
+    }
+
     public function getMedicamento(): Medicamento
     {
         return $this->medicamento;
