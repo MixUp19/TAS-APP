@@ -10,7 +10,6 @@ class Sucursal extends Model
     use HasFactory;
 
     protected $table = 'Sucursal';
-    // PK compuesto (SucursalID, CadenaID). Eloquent no soporta compuestos nativamente.
     protected $primaryKey = null;
     public $incrementing = false;
     protected $keyType = 'string';
@@ -49,7 +48,6 @@ class Sucursal extends Model
         return $this->hasMany(Inventario::class, 'SucursalID', 'SucursalID');
     }
 
-    // Helper para buscar por llave compuesta
     public static function findByKeys($sucursalId, $cadenaId)
     {
         return self::where('SucursalID', $sucursalId)

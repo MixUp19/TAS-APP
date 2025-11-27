@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Date;
 
 class Receta
 {
+    private ?int $folio;
     private ?Paciente $paciente;
     private Sucursal $sucursal;
     private string $cedulaDoctor;
@@ -45,7 +46,11 @@ class Receta
     public function anadirLineaLr($lr){
         $this->lineasRecetas[] = $lr;
     }
-    public function notificarDevolucion($id){}
+    public function notificarDevolucion(){
+        foreach ($this->lineasRecetas as $linea) {
+            $linea->crearNotificaciones();
+        }
+    }
 
 
     public function getPaciente(): Paciente

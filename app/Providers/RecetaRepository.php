@@ -5,12 +5,11 @@ namespace App\Providers;
 use App\Models\Receta as RecetaModel;
 use App\Models\LineaReceta as LineaRecetaModel;
 use App\Models\DetalleLineaReceta as DetalleLineaRecetaModel;
-use App\DomainModels\Receta;
 use App\DomainModels\Sucursal;
 use App\DomainModels\Paciente;
 use App\DomainModels\LineaReceta;
 use App\DomainModels\DetalleLineaReceta;
-use App\DomainModels\Receta as RecetaDomain;
+use App\DomainModels\Receta;
 use Illuminate\Support\Facades\DB;
 
 
@@ -37,21 +36,21 @@ class RecetaRepository
         ])->get();
         $recetasDomain = [];
         foreach ($recetas as $recetaModel) {
-            $recetasDomain[] = $this->eloquentToDomainWithSucursal($recetaModel, $sucursal);
+            $recetasDomain[] = $this->eloquentADominioConSucursal($recetaModel, $sucursal);
         }
         return $recetasDomain;
     }
-    public function eloquentToDomain(RecetaModel $recetaModel): Receta
+    public function eloquentADominio(RecetaModel $recetaModel): Receta
     {
         $sucursal = $this->sucursalRepository->obtenerSucursal(
             $recetaModel->SucursalID,
             $recetaModel->CadenaID
         );
 
-        return $this->eloquentToDomainWithSucursal($recetaModel, $sucursal);
+        return $this->eloquentADominioConSucursal($recetaModel, $sucursal);
     }
 
-    public function eloquentToDomainWithSucursal(
+    public function eloquentADominioConSucursal(
         RecetaModel $recetaModel,
         Sucursal $sucursal
     ): Receta {
@@ -100,10 +99,7 @@ class RecetaRepository
 
         foreach ($detallesModels as $detalleModel) {
             $detalleLineaReceta = $this->mapearDetalleLineaReceta($detalleModel);
-            $lineaReceta->anadirSucursal(
-                $detalleLineaReceta->getSucursal(),
-                $detalleLineaReceta->getCantidad()
-            );
+            $lineaReceta->anadirDetalleLineaReceta($detalleLineaReceta);
         }
         
         \Log::info('Línea mapeada', [
@@ -121,28 +117,28 @@ class RecetaRepository
             $detalleModel->CadenaID
         );
 
-        return new DetalleLineaReceta($sucursal, $detalleModel->DLRCantidad);
+        return new DetalleLineaReceta($sucursal, $detalleModel->DLRCantidad, $detalleModel->DLREstatus);
     }
 
-    public function guardarReceta(RecetaDomain $receta): int
+    public function guardarReceta(Receta $receta): int
     {
         return DB::transaction(function () use ($receta) {
-            // 1. Guardar el encabezado de la receta
+
             $recetaModel = RecetaModel::create([
                 'CedulaDoctor' => $receta->getCedulaDoctor(),
                 'RecetaFecha' => $receta->getFecha()->format('Y-m-d'),
                 'PacienteID' => $receta->getPaciente()->getId(),
                 'CadenaID' => $receta->getSucursal()->getCadena()->getCadenaId(),
                 'SucursalID' => $receta->getSucursal()->getSucursalId(),
+                'RecetaEstado' => $receta->getEstado(),
             ]);
 
             $folio = $recetaModel->RecetaFolio;
 
-            // 2. Guardar las líneas de medicamentos
+
             foreach ($receta->getLineasRecetas() as $lineaReceta) {
                 $medicamento = $lineaReceta->getMedicamento();
 
-                // Crear línea de receta
                 LineaRecetaModel::create([
                     'RecetaFolio' => $folio,
                     'MedicamentoID' => $medicamento->getId(),
@@ -150,7 +146,7 @@ class RecetaRepository
                     'LRPrecio' => $medicamento->getPrecio(),
                 ]);
 
-                // 3. Guardar los detalles de la línea (distribución por sucursales)
+
                 foreach ($lineaReceta->getDetalleLineaReceta() as $detalle) {
                     $sucursal = $detalle->getSucursal();
 
@@ -160,7 +156,7 @@ class RecetaRepository
                         'SucursalID' => $sucursal->getSucursalId(),
                         'CadenaID' => $sucursal->getCadena()->getCadenaId(),
                         'DLRCantidad' => $detalle->getCantidad(),
-                        'DLREstatus' => 'Pendiente', // Estado inicial
+                        'DLREstatus' => $detalle->getEstatus(),
                     ]);
                 }
             }

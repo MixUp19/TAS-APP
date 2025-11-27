@@ -10,7 +10,6 @@ class LineaReceta extends Model
     use HasFactory;
 
     protected $table = 'LINEA_RECETA';
-    // PK compuesto (RecetaFolio, MedicamentoID)
     protected $primaryKey = null;
     public $incrementing = false;
     protected $keyType = 'int';
@@ -40,7 +39,11 @@ class LineaReceta extends Model
         return $this->belongsTo(Medicamento::class, 'MedicamentoID', 'MedicamentoID');
     }
 
-    // helper para obtener detalles relacionados
+    public function detallesRelacion()
+    {
+        return $this->hasMany(DetalleLineaReceta::class, ['RecetaFolio', 'MedicamentoID'], ['RecetaFolio', 'MedicamentoID']);
+    }
+
     public function detalles()
     {
         return $this->hasMany(DetalleLineaReceta::class, 'RecetaFolio', 'RecetaFolio')
