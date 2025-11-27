@@ -111,7 +111,7 @@
                 @foreach($receta->getLineasRecetas() as $linea)
                     @foreach($linea->getDetalleLineaReceta() as $detalle)
                         @php
-                            $branchKey = $detalle->getSucursal()->getSucursalId() . '-' . $detalle->getSucursal()->getCadena()->getCadenaId();
+                            $branchKey = $detalle->getSucursal()->getSucursalId();
                             if (in_array($branchKey, $visitedBranches)) continue;
                             $visitedBranches[] = $branchKey;
                         @endphp
@@ -170,7 +170,7 @@
     @foreach($receta->getLineasRecetas() as $linea)
         @foreach($linea->getDetalleLineaReceta() as $detalle)
             @php
-                $branchKey = $detalle->getSucursal()->getCadena()->getNombre() . '-' . $detalle->getSucursal()->getCadena()->getNombre();
+                $branchKey = $detalle->getSucursal()->getSucursalId() . '-' . $detalle->getSucursal()->getCadena()->getCadenaId();
             @endphp
             @if(!isset($addedBranches[$branchKey]))
                 @php
@@ -189,11 +189,13 @@
 
     // Add markers
     branches.forEach((branch, index) => {
+        const size = branch.isStart ? 48 : 32;
+
         const icon = L.divIcon({
             className: 'custom-marker',
-            html: `<div style="background: ${branch.isStart ? '#f59e0b' : '#2563eb'}; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${branch.isStart ? '🏁' : index}</div>`,
-            iconSize: [32, 32],
-            iconAnchor: [16, 16]
+            html: `<div style="background: ${branch.isStart ? '#4ddb59ff' : '#2563eb'}; color: white; width: ${size}px; height: ${size}px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${branch.isStart ? '🏁' : index}</div>`,
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size / 2]
         });
 
         L.marker([branch.lat, branch.lng], { icon })
@@ -204,6 +206,9 @@
     // Draw route line
     if (branches.length > 1) {
         const routeCoords = branches.map(b => [b.lat, b.lng]);
+        // Add the starting point at the end to close the loop
+        routeCoords.push([branches[0].lat, branches[0].lng]);
+        
         L.polyline(routeCoords, {
             color: '#2563eb',
             weight: 4,
