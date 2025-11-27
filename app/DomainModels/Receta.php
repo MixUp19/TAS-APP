@@ -14,6 +14,7 @@ class Receta
     private Carbon $fecha;
     private ?string $estado;
     private array $lineasRecetas;
+    private int $folio;
     public function __construct($paciente){
         $this->paciente = $paciente;
         $this->lineasRecetas = [];

@@ -230,7 +230,6 @@
         <table class="recetas-tabla">
             <thead>
                 <tr>
-                    <th style="width: 30px;"></th>
                     <th>Folio</th>
                     <th>Fecha</th>
                     <th>Paciente</th>
@@ -241,11 +240,8 @@
             </thead>
             <tbody>
                 @foreach($recetas as $receta)
-                    <tr class="receta-row" onclick="toggleDetalle({{ $receta->getFolio() }})">
-                        <td>
-                            <span class="toggle-icon" id="icon-{{ $receta->getFolio() }}">▶</span>
-                        </td>
-                        <td><strong>#{{ $receta->getFolio() }}</strong></td>
+                    <tr style="cursor: pointer;" onclick="window.location='{{ route('receta.devolver', ['folio' => $receta->getFolio()]) }}'">
+                        <td>{{ $receta->getFolio() }}</td>
                         <td>{{ $receta->getFecha()->format('d/m/Y') }}</td>
                         <td>{{ $receta->getPaciente()->getNombre() }}</td>
                         <td>{{ $receta->getCedulaDoctor() }}</td>
