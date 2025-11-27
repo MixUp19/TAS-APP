@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Domain;
-
 use App\DomainModels\LineaReceta;
 use App\DomainModels\Receta;
 use App\DomainModels\Sucursal;
@@ -61,7 +60,7 @@ class ModeloProcesarReceta
         }
     }
 
-    public function finalizarReceta(): int
+    public function finalizarReceta(): Receta
     {
         $this->receta->setEstado("Completa");
         $total = $this->receta->getTotal();

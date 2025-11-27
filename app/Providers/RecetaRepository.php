@@ -165,17 +165,72 @@ class RecetaRepository
         });
     }
 
-    /**
-     * Obtiene una receta por su folio (para futuras consultas)
-     *
-     * @param int $folio
-     * @return RecetaModel|null
-     */
+
+    public function actualizarReceta(Receta $receta): int
+    {
+        return DB::transaction(function () use ($receta) {
+            $folio = $receta->getFolio();
+
+            if (!$folio) {
+                throw new \InvalidArgumentException('La receta debe tener un folio para poder actualizarla');
+            }
+
+
+            $recetaModel = RecetaModel::findOrFail($folio);
+            $recetaModel->update([
+                'CedulaDoctor' => $receta->getCedulaDoctor(),
+                'RecetaFecha' => $receta->getFecha()->format('Y-m-d'),
+                'PacienteID' => $receta->getPaciente()->getId(),
+                'CadenaID' => $receta->getSucursal()->getCadena()->getCadenaId(),
+                'SucursalID' => $receta->getSucursal()->getSucursalId(),
+                'RecetaEstado' => $receta->getEstado(),
+            ]);
+
+
+            foreach ($receta->getLineasRecetas() as $lineaReceta) {
+                $medicamento = $lineaReceta->getMedicamento();
+
+
+                LineaRecetaModel::updateOrCreate(
+                    [
+                        'RecetaFolio' => $folio,
+                        'MedicamentoID' => $medicamento->getId(),
+                    ],
+                    [
+                        'LRCantidad' => $lineaReceta->getCantidad(),
+                        'LRPrecio' => $medicamento->getPrecio(),
+                    ]
+                );
+
+
+                foreach ($lineaReceta->getDetalleLineaReceta() as $detalle) {
+                    $sucursal = $detalle->getSucursal();
+
+                    DetalleLineaRecetaModel::updateOrCreate(
+                        [
+                            'RecetaFolio' => $folio,
+                            'MedicamentoID' => $medicamento->getId(),
+                            'SucursalID' => $sucursal->getSucursalId(),
+                            'CadenaID' => $sucursal->getCadena()->getCadenaId(),
+                        ],
+                        [
+                            'DLRCantidad' => $detalle->getCantidad(),
+                            'DLREstatus' => $detalle->getEstatus(),
+                        ]
+                    );
+                }
+            }
+
+            return $folio;
+        });
+    }
+
+
     public function obtenerRecetaPorFolio(int $folio): ?Receta
     {
         $recetaModel = RecetaModel::with(['lineas.medicamento', 'paciente', 'sucursal.cadena'])
             ->find($folio);
-        
+
         if (!$recetaModel) {
             return null;
         }

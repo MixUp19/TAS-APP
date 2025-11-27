@@ -11,7 +11,7 @@ Route::get('/', function () {
 
 Route::get('/receta/seleccionar-medicamentos', [ControladorProcesarReceta::class, 'obtenerMedicamentos'])->name('receta.seleccionarMedicamentos');
 
-Route::post('/receta/guardarMedicamentos', [ControladorProcesarReceta::class, 'guardarMedicamentos'])->name('medicamentos.add');
+Route::post('/receta/guardarMedicamentos', [ControladorProcesarReceta::class, 'seleccionarMedicamentos'])->name('medicamentos.add');
 
 Route::get('/receta/revisar', [ControladorProcesarReceta::class, 'revisarReceta'])->name('receta.revisar');
 
@@ -33,6 +33,16 @@ Route::post('/receta/escanear', [ControladorProcesarReceta::class, 'escanearRece
 Route::get('/receta/indice-recetas', [ControladorDevolverReceta::class, 'obtenerRecetas'])
     ->name('receta.indiceRecetas');
 
+Route::get('/receta/detalle/{folio}', [ControladorDevolverReceta::class, 'obtenerDetalleReceta'])
+    ->name('receta.detalle');
+
+Route::post('/receta/cambiar-estado', [ControladorDevolverReceta::class, 'cambiarEstado'])
+    ->name('receta.cambiarEstado');
+
+Route::post('/receta/cancelar', [ControladorDevolverReceta::class, 'cancelarReceta'])
+    ->name('receta.cancelar');
+
+
 Route::get('/receta/devolver/{folio}', [ControladorDevolverReceta::class, 'obtenerReceta'])
     ->name('receta.devolver');
-    
+

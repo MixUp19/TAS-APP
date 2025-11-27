@@ -112,12 +112,16 @@ class Receta
     {
         $this->lineasRecetas = $lineasRecetas;
     }
-    public function getFolio(): int
+
+    public function getFolio(): ?int
     {
         return $this->folio;
     }
-    public function setFolio(int $folio): void
+
+    public function setFolio(?int $folio): void
     {
         $this->folio = $folio;
     }
+
+
 }
