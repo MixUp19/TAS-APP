@@ -37,11 +37,11 @@
     <div class="card mb-3">
         <div class="card-body">
             <h5 class="card-title"> Medicamentos y Ruta de Recolección</h5>
-            
+
             @php
                 $lineas = $receta->getLineasRecetas();
             @endphp
-            
+
             @if(count($lineas) === 0)
                 <div class="alert alert-warning">No hay líneas de receta para mostrar.</div>
             @else
@@ -82,7 +82,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                
+
                 <div class="text-end mt-3">
                     <h5>Total: <strong>${{ number_format($receta->getTotal(), 2) }} MXN</strong></h5>
                 </div>
@@ -99,7 +99,7 @@
                     $visitedBranches = [];
                     $stepNumber = 1;
                 @endphp
-                
+
                 <!-- Starting point -->
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
@@ -208,7 +208,7 @@
         const routeCoords = branches.map(b => [b.lat, b.lng]);
         // Add the starting point at the end to close the loop
         routeCoords.push([branches[0].lat, branches[0].lng]);
-        
+
         L.polyline(routeCoords, {
             color: '#2563eb',
             weight: 4,
