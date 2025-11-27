@@ -15,47 +15,45 @@ class MedicamentoRepository
             $cantidadRequerida = $linea->getCantidad();
             $cantidadAcumulada = 0;
             $i = 0;
-            
-            // Buscar en sucursales hasta completar la cantidad requerida
+
+
             while($cantidadAcumulada < $cantidadRequerida && $i < count($sucursales)) {
                 $sucursalActual = $sucursales[$i];
                 $cantidadFaltante = $cantidadRequerida - $cantidadAcumulada;
-                
-                // Obtener stock disponible en esta sucursal
+
+
                 $stockDisponible = $this->obtenerExistenciaMedicamento(
-                    $sucursalActual, 
-                    $linea->getMedicamentoId(), 
+                    $sucursalActual,
+                    $linea->getMedicamentoId(),
                     $cantidadFaltante
                 );
-                
+
                 if($stockDisponible > 0) {
-                    // Añadir detalle de esta sucursal a la línea
                     $linea->anadirSucursal($sucursalActual, $stockDisponible);
                     $cantidadAcumulada += $stockDisponible;
                 }
-                
+
                 $i++;
             }
-            
+
 
         }
         return $lineas;
     }
-    
+
     private function obtenerExistenciaMedicamento(Sucursal $sucursal, int $medicamentoId, int $cantidadSolicitada): int
     {
         $inventario = Inventario::where('SucursalID', $sucursal->getSucursalId())
             ->where('CadenaID', $sucursal->getCadena()->getCadenaId())
             ->where('MedicamentoID', $medicamentoId)
             ->first();
-        
+
         if (!$inventario) {
             return 0;
         }
-        
+
         $stockDisponible = $inventario->InventarioCantidad;
-        
-        // Retornar el menor entre lo disponible y lo solicitado
+
         return min($stockDisponible, $cantidadSolicitada);
     }
     public function obtenerMedicamentoPorId($id){

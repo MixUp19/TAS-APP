@@ -57,23 +57,11 @@ class ModeloProcesarReceta
 
     public function confirmarReceta(): int
     {
-        // Obtener líneas de la receta
         $lineas = $this->receta->getLineasRecetas();
-
-        // Obtener sucursal seleccionada
         $sucursal = $this->receta->getSucursal();
-
-        // Obtener sucursales de la misma ciudad
         $sucursales = $this->sucursalRepository->getSucursalesPorCiudad($sucursal->getCiudadId());
-
-        // Ordenar sucursales por cercanía (patrón Fabricación Pura)
         $sucursales = $this->localizadorService->localizarSucursal($sucursal, $sucursales);
-
-        // Buscar medicamentos en sucursales ordenadas (patrón Alta Cohesión)
-        // Este método modifica las líneas añadiendo detalles de sucursales
         $lineas = $this->medicamentoRepository->buscarMedicamentosEnSucursales($sucursal, $sucursales, $lineas);
-
-        // Guardar receta en la base de datos (patrón Creador en Repository)
         $folio = $this->recetaRepository->guardarReceta($this->receta);
 
         return $folio;
