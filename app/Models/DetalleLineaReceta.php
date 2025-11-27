@@ -42,7 +42,8 @@ class DetalleLineaReceta extends Model
 
     public function sucursal()
     {
-        return Sucursal::findByKeys($this->SucursalID, $this->CadenaID);
+        return $this->belongsTo(Sucursal::class, 'SucursalID', 'SucursalID')
+            ->where('Sucursal.CadenaID', '=', $this->CadenaID);
     }
 }
 

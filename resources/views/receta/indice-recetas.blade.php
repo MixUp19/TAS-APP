@@ -108,6 +108,7 @@
         <table class="recetas-tabla">
             <thead>
                 <tr>
+                    <th>Folio</th>
                     <th>Fecha</th>
                     <th>Paciente</th>
                     <th>Cédula Doctor</th>
@@ -118,7 +119,8 @@
             </thead>
             <tbody>
                 @foreach($recetas as $receta)
-                    <tr>
+                    <tr style="cursor: pointer;" onclick="window.location='{{ route('receta.devolver', ['folio' => $receta->getFolio()]) }}'">
+                        <td>{{ $receta->getFolio() }}</td>
                         <td>{{ $receta->getFecha()->format('d/m/Y') }}</td>
                         <td>{{ $receta->getPaciente()->getNombre() }}</td>
                         <td>{{ $receta->getCedulaDoctor() }}</td>

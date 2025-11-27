@@ -29,4 +29,8 @@ class ModeloDevolverReceta
         $sucursal = $this->sucursalRepository->obtenerSucursal( "SUC001", "FAR001");
         return $this->recetaRepository->obtenerRecetasPorSucursal($sucursal);
     }
+
+    public function obtenerReceta($folio){
+        return $this->recetaRepository->obtenerRecetaPorFolio($folio);
+    }
 }

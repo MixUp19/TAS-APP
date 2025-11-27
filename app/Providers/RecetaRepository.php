@@ -62,12 +62,22 @@ class RecetaRepository
         $receta->setCedulaDoctor($recetaModel->CedulaDoctor);
         $receta->setFecha($recetaModel->RecetaFecha->format('Y-m-d'));
         $receta->setEstado($recetaModel->RecetaEstado);
+        $receta->setFolio($recetaModel->RecetaFolio);
 
+        \Log::info('Mapeando receta', [
+            'folio' => $recetaModel->RecetaFolio,
+            'lineas_eloquent' => $recetaModel->lineas->count()
+        ]);
 
         foreach ($recetaModel->lineas as $lineaModel) {
             $lineaReceta = $this->mapearLineaReceta($lineaModel);
             $receta->anadirLineaLr($lineaReceta);
         }
+        
+        \Log::info('Receta mapeada', [
+            'folio' => $recetaModel->RecetaFolio,
+            'lineas_domain' => count($receta->getLineasRecetas())
+        ]);
 
         return $receta;
     }
@@ -77,14 +87,29 @@ class RecetaRepository
         $medicamento = $this->medicamentoRepository->obtenerMedicamentoPorId($lineaModel->MedicamentoID);
         $lineaReceta = new LineaReceta($medicamento, $lineaModel->LRCantidad);
 
-        $detalles = $lineaModel->detalles();
-        foreach ($detalles as $detalleModel) {
+        // Cargar detalles manualmente debido a la clave compuesta
+        $detallesModels = \App\Models\DetalleLineaReceta::where('RecetaFolio', $lineaModel->RecetaFolio)
+            ->where('MedicamentoID', $lineaModel->MedicamentoID)
+            ->with('sucursal.cadena')
+            ->get();
+
+        \Log::info('Mapeando línea', [
+            'medicamento_id' => $lineaModel->MedicamentoID,
+            'detalles_count' => $detallesModels->count()
+        ]);
+
+        foreach ($detallesModels as $detalleModel) {
             $detalleLineaReceta = $this->mapearDetalleLineaReceta($detalleModel);
             $lineaReceta->anadirSucursal(
                 $detalleLineaReceta->getSucursal(),
                 $detalleLineaReceta->getCantidad()
             );
         }
+        
+        \Log::info('Línea mapeada', [
+            'medicamento_id' => $lineaModel->MedicamentoID,
+            'detalles_domain_count' => count($lineaReceta->getDetalleLineaReceta())
+        ]);
 
         return $lineaReceta;
     }
@@ -150,9 +175,15 @@ class RecetaRepository
      * @param int $folio
      * @return RecetaModel|null
      */
-    public function obtenerRecetaPorFolio(int $folio): ?RecetaModel
+    public function obtenerRecetaPorFolio(int $folio): ?Receta
     {
-        return RecetaModel::with(['lineas.medicamento', 'paciente'])
+        $recetaModel = RecetaModel::with(['lineas.medicamento', 'paciente', 'sucursal.cadena'])
             ->find($folio);
+        
+        if (!$recetaModel) {
+            return null;
+        }
+
+        return $this->eloquentToDomain($recetaModel);
     }
 }

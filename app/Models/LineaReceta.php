@@ -43,9 +43,8 @@ class LineaReceta extends Model
     // helper para obtener detalles relacionados
     public function detalles()
     {
-        return DetalleLineaReceta::where('RecetaFolio', $this->RecetaFolio)
-            ->where('MedicamentoID', $this->MedicamentoID)
-            ->get();
+        return $this->hasMany(DetalleLineaReceta::class, 'RecetaFolio', 'RecetaFolio')
+            ->where('Detalle_Linea_Receta.MedicamentoID', '=', $this->MedicamentoID);
     }
 }
 
