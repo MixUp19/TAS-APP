@@ -9,9 +9,9 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/seleccionar-medicamentos', [ControladorProcesarReceta::class, 'obtenerMedicamentos'])->name('receta.seleccionarMedicamentos');
+Route::get('/receta/seleccionar-medicamentos', [ControladorProcesarReceta::class, 'obtenerMedicamentos'])->name('receta.seleccionarMedicamentos');
 
-Route::post('/receta/guardarMedicamentos', [ControladorProcesarReceta::class, 'guardarMedicamentos'])->name('medicamentos.add');
+Route::post('/receta/guardarMedicamentos', [ControladorProcesarReceta::class, 'seleccionarMedicamentos'])->name('medicamentos.add');
 
 Route::get('/receta/revisar', [ControladorProcesarReceta::class, 'revisarReceta'])->name('receta.revisar');
 
@@ -22,7 +22,7 @@ Route::get('/receta/confirmacion/{folio}', [ControladorProcesarReceta::class, 'm
 Route::get('/receta/formulario', [ControladorProcesarReceta::class, 'obtenerSucursales'])
     ->name('receta.formulario');
 
-Route::post('/receta/guardar-encabezado', [ControladorProcesarReceta::class, 'guardarEncabezado'])
+Route::post('/receta/guardar-encabezado', [ControladorProcesarReceta::class, 'seleccionarSucursal'])
     ->name('receta.guardarEncabezado');
 Route::get('/recipes/upload', function () {
     return view('subir_receta');

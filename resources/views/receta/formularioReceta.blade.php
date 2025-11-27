@@ -33,19 +33,16 @@
             <label for="sucursal_id">Seleccionar Sucursal de Retiro</label>
             <select name="sucursal_id" id="sucursal_id" required>
                 <option value="">-- Seleccione una opción --</option>
-
-                @foreach($sucursales as $cadenaId => $sucursalesCadena)
-                    @foreach($sucursalesCadena as $sucursal)
+                @foreach($sucursales as $sucursal)
                         @php
-                            $nombreCadena = $sucursal->cadena->CadenaNombre ?? 'Cadena ' . $cadenaId;
-                            $direccion = $sucursal->SucursalCalle ?? '';
-                            if ($sucursal->SucursalColonia) {
-                                $direccion .= ($direccion ? ', ' : '') . $sucursal->SucursalColonia;
+                            $nombreCadena = $sucursal->getCadena()->getNombre() ?? 'Cadena ' . $sucursal->getCadena()->getCadenaID();
+                            $direccion = $sucursal->getCalle() ?? '';
+                            if ($sucursal->getColonia()) {
+                                $direccion .= ($direccion ? ', ' : '') . $sucursal->getColonia();
                             }
                             $texto = "Cadena: {$nombreCadena} - Sucursal {$direccion}";
                         @endphp
-                        <option value="{{ $sucursal->SucursalID }}">{{ $texto }}</option>
-                    @endforeach
+                        <option value="{{ $sucursal->getSucursalId() }},{{ $sucursal->getCadena()->getCadenaID() }}">{{ $texto }}</option>
                 @endforeach
 
             </select>

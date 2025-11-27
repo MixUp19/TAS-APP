@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Domain;
-
 use App\DomainModels\LineaReceta;
 use App\DomainModels\Receta;
 use App\DomainModels\Sucursal;
@@ -61,7 +60,7 @@ class ModeloProcesarReceta
         }
     }
 
-    public function finalizarReceta(): int
+    public function finalizarReceta(): Receta
     {
         $this->receta->setEstado("Completa");
         $total = $this->receta->getTotal();
@@ -133,12 +132,8 @@ class ModeloProcesarReceta
         }
         return $lineasReceta;
     }
-
-
-    public function obtenerSucursales()
-    {
-        // Obtiene todas las sucursales desde el repositorio
-        return $this->sucursalRepository->listarSucursales();
+    public function getReceta(): Receta{
+        return $this->receta;
     }
 
     public function obtenerSucursales(): array

@@ -72,7 +72,7 @@ class RecetaRepository
             $lineaReceta = $this->mapearLineaReceta($lineaModel);
             $receta->anadirLineaLr($lineaReceta);
         }
-
+        
         \Log::info('Receta mapeada', [
             'folio' => $recetaModel->RecetaFolio,
             'lineas_domain' => count($receta->getLineasRecetas())
@@ -101,7 +101,7 @@ class RecetaRepository
             $detalleLineaReceta = $this->mapearDetalleLineaReceta($detalleModel);
             $lineaReceta->anadirDetalleLineaReceta($detalleLineaReceta);
         }
-
+        
         \Log::info('Línea mapeada', [
             'medicamento_id' => $lineaModel->MedicamentoID,
             'detalles_domain_count' => count($lineaReceta->getDetalleLineaReceta())
