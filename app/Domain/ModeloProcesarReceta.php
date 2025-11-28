@@ -60,7 +60,7 @@ class ModeloProcesarReceta
         }
     }
 
-    public function finalizarReceta(): Receta
+    public function finalizarReceta(): float
     {
         $this->receta->setEstado("Completa");
         $total = $this->receta->getTotal();
@@ -108,6 +108,10 @@ class ModeloProcesarReceta
             $this->receta->anadirLineaLr($linea);
         }
 
+    }
+    public function limpiarLineas():void
+    {
+        $this->receta->limpiarLineas();
     }
 
     public function escanearReceta($imagen)

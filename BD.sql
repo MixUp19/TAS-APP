@@ -172,4 +172,7 @@ select * from "Sucursal";
 select * from "Receta";
 
 ALTER TABLE "Receta" ADD COLUMN "RecetaEstado" varchar(10) default 'Pendiente';
-select * from "Paciente"
+select * from "Paciente";
+
+select * from "Receta";
+select * from "LINEA_RECETA"
