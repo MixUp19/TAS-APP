@@ -3,8 +3,25 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ControladorProcesarReceta;
 use App\Http\Controllers\ControladorDevolverReceta;
+use App\Http\Controllers\ControladorSesiones;
 use Illuminate\Http\Request;
 
+// ===== Rutas de Autenticación =====
+Route::get('/login', [ControladorSesiones::class, 'mostrarLogin'])->name('login');
+Route::post('/login', [ControladorSesiones::class, 'iniciarSesion'])->name('iniciar.sesion');
+Route::post('/registro', [ControladorSesiones::class, 'registrarUsuario'])->name('registrar.usuario');
+Route::post('/logout', [ControladorSesiones::class, 'cerrarSesion'])->name('cerrar.sesion');
+
+// Rutas temporales para dashboards (puedes reemplazarlas con las vistas reales)
+Route::get('/paciente/dashboard', function () {
+    return view('paciente.dashboard');
+})->name('paciente.dashboard');
+
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
+})->name('admin.dashboard');
+
+// ===== Rutas Existentes =====
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
