@@ -31,7 +31,6 @@ class AdminSucursalRepository
 
     public function actualizarAdminSucursal(AdminSucursal $admin): void
     {
-        dump($admin);
         $adminModel = AdminSucursalModel::where('AdminCorreo', $admin->getEmail())->first();
 
         if ($adminModel) {
