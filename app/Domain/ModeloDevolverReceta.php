@@ -6,6 +6,7 @@ use App\DomainModels\Receta;
 use App\Providers\RecetaRepository;
 use App\Providers\SucursalRepository;
 use App\DomainModels\Sucursal;
+use Illuminate\Support\Facades\Session;
 
 class ModeloDevolverReceta
 {
@@ -32,8 +33,15 @@ class ModeloDevolverReceta
     }
 
     public function obtenerRecetas(){
-        $sucursal = $this->sucursalRepository->obtenerSucursal( "SUC001", "FAR001");
-        return $this->recetaRepository->obtenerRecetasPorSucursal($sucursal);
+        if (!Session::has('usuario')) {
+            return [];
+        }
+         
+        $cadenaId = Session::get('usuario')->getSucursal()->getCadena()->getCadenaId();
+        $sucursalId = Session::get('usuario')->getSucursal()->getSucursalId();
+
+        $sucursal = $this->sucursalRepository->obtenerSucursal($sucursalId, $cadenaId); 
+        return $this->recetaRepository->obtenerRecetasPendientesPorSucursal($sucursal);
     }
 
     public function obtenerReceta($folio){

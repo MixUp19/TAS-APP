@@ -210,7 +210,8 @@ class ControladorProcesarReceta
         $modelo = $this->obtenerOInicializarModelo($request);
 
         list($sucursalId, $cadenaId) = explode(',', $datos['sucursal_id']);
-        $paciente = new \App\DomainModels\Paciente(1,"Juan","Perez","García","juan.perez@email.com","6671234567","$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",true, 0, null);
+        //$paciente = new \App\DomainModels\Paciente(1,"Juan","Perez","García","juan.perez@email.com","6671234567","$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi",true, 0, null);
+        $paciente = $request->session()->get('usuario');
         $modelo->iniciarPedido($paciente);
         $modelo->seleccionarSucursal($sucursalId, $cadenaId, $datos['cedula'], $datos['fecha']);
 
@@ -256,4 +257,25 @@ class ControladorProcesarReceta
         return view('receta.confirmacion', ['folio' => $folio]);
     }
 
+    public function buscarReceta(Request $request)
+    {
+        $modelo = $this->obtenerOInicializarModelo($request);
+        $receta = $modelo->buscarReceta($request->input('folio'));
+        return view('paciente.dashboard', ['receta' => $receta]);
+    }
+
+    public function obtenerRecetasPaciente(Request $request)
+    {
+        $modelo = $this->obtenerOInicializarModelo($request);
+        
+        $paciente = $request->session()->get('usuario');
+        
+        if (!$paciente) {
+            return redirect()->route('login')->withErrors('Debe iniciar sesión primero.');
+        }
+        
+        $recetas = $modelo->obtenerRecetasPaciente($paciente->getId());
+        
+        return view('paciente.dashboard', ['recetas' => $recetas]);
+    }
 }

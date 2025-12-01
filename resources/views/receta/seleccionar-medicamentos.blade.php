@@ -6,11 +6,11 @@
     <title>Seleccionar Medicamentos</title>
     {{-- Incluye aquí tus estilos CSS, como Bootstrap --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 <div class="container mt-4">
-    <h1>Seleccionar Medicamentos</h1>
-
+    <x-paciente-nav titulo="Seleccionar Medicamentos" />
     @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
@@ -77,8 +77,7 @@
         </div>
 
         <div class="mt-3 d-flex gap-3">
-            <button type="submit" class="btn btn-primary">Guardar Medicamentos</button>
-            <a href="{{ route('receta.revisar') }}" class="btn btn-success">Continuar a Revisar →</a>
+            <button type="submit" class="btn btn-success">Continuar a Revisar →</button>
         </div>
     </form>
 
