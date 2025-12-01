@@ -47,4 +47,10 @@ class ModeloDevolverReceta
     public function obtenerReceta($folio){
         return $this->recetaRepository->obtenerRecetaPorFolio($folio);
     }
+
+    public function cambiarEstadoReceta($folio, $nuevoEstado){
+        $receta = $this->recetaRepository->obtenerRecetaPorFolio($folio);
+        $receta->setEstado($nuevoEstado);
+        $this->recetaRepository->actualizarReceta($receta);
+    }
 }

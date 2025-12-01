@@ -56,10 +56,13 @@ class ControladorDevolverReceta
         $modelo = $this->obtenerOInicializarModelo($request);
         $modelo->cambiarEstadoReceta($folio, $nuevoEstado);
 
-        return response()->json([
+        /*return response()->json([
             'success' => true,
             'message' => 'Estado actualizado correctamente'
-        ]);
+        ]);*/
+
+        return redirect()->back()->with('success', 'Estado actualizado correctamente');
+
     }
 
     public function cancelarReceta(Request $request){
@@ -67,10 +70,12 @@ class ControladorDevolverReceta
         $modelo->cancelarReceta($request->input('folio'));
         $modelo->confirmarCancelacion();
 
-        return response()->json([
+        /*return response()->json([
             'success' => true,
             'message' => 'Receta cancelada y devolución notificada'
-        ]);
+        ]);*/
+
+        return redirect()->back()->with('success', 'Receta cancelada y devolución notificada');
     }
 
     public function buscarReceta(Request $request){

@@ -137,6 +137,65 @@
         </div>
     </div>
 
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <!-- Cambios de estatus y cancelacion de receta -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Acciones</h5>
+            <ol class="list-group list-group-numbered">
+                <li class="list-group-item">
+                    <form action="{{ route('receta.cambiarEstado') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="folio" value="{{ $receta->getFolio() }}">
+                        <input type="hidden" name="estado" value="Lista para recoger">
+
+                        <button type="submit" class="btn btn-lista"
+                            {{ !($receta->getEstado() !== 'Cancelada por no recoger' && $receta->getEstado() !== 'Recolectada') ? 'disabled' : '' }}>
+                            Lista para recoger
+                        </button>
+                    </form>
+                </li>
+                <li class="list-group-item">
+                    <form action="{{ route('receta.cambiarEstado') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="folio" value="{{ $receta->getFolio() }}">
+                        <input type="hidden" name="estado" value="Recolectada">
+
+                        <button type="submit" class="btn btn-Recolectada"
+                            {{ !($receta->getEstado() !== 'Cancelada por no recoger' && $receta->getEstado() !== 'Recolectada') ? 'disabled' : '' }}>
+                            Recolectada
+                        </button>
+                    </form>
+                </li>
+                <li class="list-group-item">
+                    <form action="{{ route('receta.cancelar') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="folio" value="{{ $receta->getFolio() }}">
+                        <input type="hidden" name="estado" value="Recolectada">
+
+                        <button type="submit"
+                            {{ !($receta->getEstado() !== 'Cancelada por no recoger' && $receta->getEstado() !== 'Recolectada') ? 'disabled' : '' }}>
+                            Devolver
+                        </button>
+                    </form>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    
+
     <!-- Mapa de Ruta -->
     <div class="card mb-3">
         <div class="card-body">
@@ -148,6 +207,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+
     // Initialize map
     const map = L.map('map').setView([{{ $receta->getSucursal()->getLatitud() }}, {{ $receta->getSucursal()->getLongitud() }}], 13);
 
