@@ -40,6 +40,20 @@ class RecetaRepository
         }
         return $recetasDomain;
     }
+
+    public function obtenerRecetasPendientesPorSucursal(Sucursal $sucursal){
+        $recetas = RecetaModel::where([
+            ['SucursalID', '=', $sucursal->getSucursalId()],
+            ['CadenaID', '=', $sucursal->getCadena()->getCadenaId()],
+            ['RecetaEstado', '=', 'Pendiente']
+        ])->get();
+        $recetasDomain = [];
+        foreach ($recetas as $recetaModel) {
+            $recetasDomain[] = $this->eloquentADominioConSucursal($recetaModel, $sucursal);
+        }
+        return $recetasDomain;
+    }
+
     public function eloquentADominio(RecetaModel $recetaModel): Receta
     {
         $sucursal = $this->sucursalRepository->obtenerSucursal(
@@ -236,5 +250,20 @@ class RecetaRepository
         }
 
         return $this->eloquentADominio($recetaModel);
+    }
+
+    public function obtenerRecetasPorPaciente(int $pacienteId): array
+    {
+        $recetasModels = RecetaModel::with(['lineas.medicamento', 'paciente', 'sucursal.cadena'])
+            ->where('PacienteID', $pacienteId)
+            ->orderBy('RecetaFecha', 'desc')
+            ->get();
+
+        $recetas = [];
+        foreach ($recetasModels as $recetaModel) {
+            $recetas[] = $this->eloquentADominio($recetaModel);
+        }
+
+        return $recetas;
     }
 }

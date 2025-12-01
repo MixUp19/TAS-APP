@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revisar Receta</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 <div class="container mt-4">
-    <h1>Revisar Receta</h1>
+    <x-paciente-nav titulo="Revisar Receta" />
     <p class="text-muted">Verifica que toda la información sea correcta antes de confirmar</p>
 
     <div class="card mb-3">
@@ -53,7 +54,6 @@
     </div>
 
     <div class="d-flex gap-3">
-        <a href="{{ route('receta.seleccionarMedicamentos') }}" class="btn btn-secondary">← Modificar Medicamentos</a>
         <form action="{{ route('receta.confirmar') }}" method="POST" style="display: inline;">
             @csrf
             <button type="submit" class="btn btn-primary">Confirmar Receta</button>

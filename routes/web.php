@@ -21,10 +21,13 @@ Route::get('/admin/dashboard', function () {
     return view('admin.dashboard');
 })->name('admin.dashboard');
 
-// ===== Rutas Existentes =====
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [ControladorSesiones::class, 'mostrarLogin'])->name('login');
+
+Route::get('/receta/buscar', [ControladorProcesarReceta::class, 'buscarReceta'])->name('receta.buscar');
+
+Route::get('/receta/mis-recetas', [ControladorProcesarReceta::class, 'obtenerRecetasPaciente'])->name('receta.mis-recetas');
+
+Route::get('/farmaceutico/buscar', [ControladorDevolverReceta::class, 'buscarReceta'])->name('farmaceutico.buscar');
 
 Route::get('/receta/seleccionar-medicamentos', [ControladorProcesarReceta::class, 'obtenerMedicamentos'])->name('receta.seleccionarMedicamentos');
 
@@ -50,7 +53,7 @@ Route::post('/receta/escanear', [ControladorProcesarReceta::class, 'escanearRece
 Route::get('/receta/indice-recetas', [ControladorDevolverReceta::class, 'obtenerRecetas'])
     ->name('receta.indiceRecetas');
 
-Route::get('/receta/detalle/{folio}', [ControladorDevolverReceta::class, 'obtenerDetalleReceta'])
+Route::get('/receta/detalle/{folio}', [ControladorDevolverReceta::class, 'obtenerReceta'])
     ->name('receta.detalle');
 
 Route::post('/receta/cambiar-estado', [ControladorDevolverReceta::class, 'cambiarEstado'])
@@ -58,7 +61,6 @@ Route::post('/receta/cambiar-estado', [ControladorDevolverReceta::class, 'cambia
 
 Route::post('/receta/cancelar', [ControladorDevolverReceta::class, 'cancelarReceta'])
     ->name('receta.cancelar');
-
 
 Route::get('/receta/devolver/{folio}', [ControladorDevolverReceta::class, 'obtenerReceta'])
     ->name('receta.devolver');

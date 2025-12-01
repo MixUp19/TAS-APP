@@ -4,12 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Receta - Folio #{{ $receta->getFolio() }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
-<div class="container mt-4">
-    <h1>Detalle de Receta</h1>
+    <div class="container mt-4">
+    {{-- Mostrar navegación según el tipo de usuario --}}
+    @if(Session::has('usuario'))
+        @if(Session::get('tipo_usuario') === 'paciente')
+            <x-paciente-nav titulo="Detalle de Receta" />
+        @else
+            <x-farmaceutico-nav titulo="Detalle de Receta" />
+        @endif
+    @endif
+
     <p class="text-muted">Folio: <strong>#{{ str_pad($receta->getFolio(), 6, '0', STR_PAD_LEFT) }}</strong> | Estado: <span class="badge bg-success">{{ $receta->getEstado() }}</span></p>
 
     <!-- Información General -->
@@ -134,12 +143,6 @@
             <h5 class="card-title"> Mapa de Ruta Optimizada</h5>
             <div id="map" style="height: 500px; border-radius: 8px;"></div>
         </div>
-    </div>
-
-    <!-- Botones de Acción -->
-    <div class="d-flex gap-3 mb-4">
-        <a href="{{ route('receta.indiceRecetas') }}" class="btn btn-secondary">← Volver al Índice</a>
-        <a href="{{ route('home') }}" class="btn btn-outline-primary"> Inicio</a>
     </div>
 </div>
 

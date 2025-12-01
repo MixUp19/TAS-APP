@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Índice de Recetas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -224,7 +225,7 @@
 <body>
 
 <div class="container">
-    <h1>Índice de Recetas por Sucursal</h1>
+    <x-farmaceutico-nav titulo="Recetas pendientes de la sucursal {{ Session::get('usuario')->getSucursal()->getSucursalId() }}" />
 
     @if(count($recetas) > 0)
         <table class="recetas-tabla">
@@ -269,13 +270,9 @@
         </table>
     @else
         <div class="sin-recetas">
-            <p>No hay recetas registradas para esta sucursal.</p>
+            <p>No hay recetas pendientes para esta sucursal.</p>
         </div>
     @endif
-
-    <div style="text-align: center;">
-        <a href="{{ route('home') }}" class="btn-volver">Volver al inicio</a>
-    </div>
 </div>
 
 <script>

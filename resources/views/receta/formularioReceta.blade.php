@@ -20,11 +20,12 @@
         .btn-next { width: 100%; background-color: #3182ce; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         .btn-next:hover { background-color: #2c5282; }
     </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 
 <div class="container">
-    <h2>Datos de la Receta</h2>
+    <x-paciente-nav titulo="Formulario de Receta" />
 
     <form action="{{ route('receta.guardarEncabezado') }}" method="POST">
         @csrf

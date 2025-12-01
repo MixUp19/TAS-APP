@@ -150,5 +150,14 @@ class ModeloProcesarReceta
         return $this->medicamentoRepository->obtenerMedicamentos();
     }
 
+    //extra
+    public function buscarReceta($folio)
+    {
+        return $this->recetaRepository->obtenerRecetaPorFolio($folio);
+    }
 
+    public function obtenerRecetasPaciente($pacienteId)
+    {
+        return $this->recetaRepository->obtenerRecetasPorPaciente($pacienteId);
+    }
 }
