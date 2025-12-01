@@ -23,7 +23,7 @@ class ModeloDevolverReceta
     public function cancelarReceta($folio): void
     {
         $this->recetaPorCancelar = $this->recetaRepository->obtenerRecetaPorFolio($folio);
-        $this->recetaPorCancelar->setEstado("Cancelada");
+        $this->recetaPorCancelar->setEstado(estado: "Cancelada");
     }
 
     public function confirmarCancelacion()

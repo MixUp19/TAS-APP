@@ -1,9 +1,7 @@
-{{-- Componente de Navegación para Paciente --}}
 @props(['titulo' => 'Dashboard - Paciente'])
 
 <nav aria-label="Menú principal del dashboard" class="mb-6">
     <div class="flex flex-wrap justify-between items-center gap-4">
-        {{-- Título --}}
         <h1 class="text-3xl font-bold text-gray-800">{{ $titulo }}</h1>
         
         {{-- Búsqueda de Recetas por Folio --}}

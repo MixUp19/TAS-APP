@@ -26,12 +26,12 @@ class LineaReceta
 
     public function crearNotificaciones(): void{
         foreach ($this->detalleLineaReceta as $dlr) {
-            $dlr->setEstatus("Por devolver");
+            $dlr->setEstatus("En Devolucion");
         }
     }
 
     public function anadirSucursal($sucursal, $cantidad){
-        $dlr = new DetalleLineaReceta($sucursal,$cantidad, "Por recoger");
+        $dlr = new DetalleLineaReceta($sucursal,$cantidad, "En proceso");
         $this->detalleLineaReceta[] = $dlr;
     }
 

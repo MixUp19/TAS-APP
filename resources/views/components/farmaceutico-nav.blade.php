@@ -1,12 +1,9 @@
-{{-- Componente de Navegación para Farmaceutico --}}
 @props(['titulo' => 'Dashboard - Farmaceutico'])
 
 <nav aria-label="Menú principal del dashboard" class="mb-6">
     <div class="flex flex-wrap justify-between items-center gap-4">
-        {{-- Título --}}
         <h1 class="text-3xl font-bold text-gray-800">{{ $titulo }}</h1>
         
-        {{-- Búsqueda de Recetas por Folio --}}
         <form action="{{ route('farmaceutico.buscar') }}" method="GET" class="flex items-center gap-2">
             <label for="folio-search" class="sr-only">Buscar receta por folio</label>
             <input 
@@ -28,7 +25,6 @@
             </button>
         </form>
         
-        {{-- Botones de Acción --}}
         <div class="flex items-center gap-3">
             <form action="{{ route('receta.indiceRecetas') }}" method="GET">
                 @csrf

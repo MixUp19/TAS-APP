@@ -85,7 +85,7 @@
             background-color: #fef5e7;
             color: #d97706;
         }
-        .estado-completada, .estado-recogida {
+        .estado-completada, .estado-Recolectada {
             background-color: #d1fae5;
             color: #059669;
         }
@@ -140,7 +140,7 @@
             background-color: #3b82f6;
             color: white;
         }
-        .btn-recogida {
+        .btn-Recolectada {
             background-color: #10b981;
             color: white;
         }
@@ -374,7 +374,7 @@
             </div>
         `).join('');
 
-        const puedeModificar = receta.estado !== 'Cancelada por no recoger' && receta.estado !== 'Recogida';
+        const puedeModificar = receta.estado !== 'Cancelada por no recoger' && receta.estado !== 'Recolectada';
 
         contenido.innerHTML = `
             <div class="detalle-header">
@@ -383,8 +383,8 @@
                     <button class="btn btn-lista" onclick="cambiarEstado(${folio}, 'Lista para recoger')" ${!puedeModificar ? 'disabled' : ''}>
                         Lista para recoger
                     </button>
-                    <button class="btn btn-recogida" onclick="cambiarEstado(${folio}, 'Recogida')" ${!puedeModificar ? 'disabled' : ''}>
-                        Recogida
+                    <button class="btn btn-Recolectada" onclick="cambiarEstado(${folio}, 'Recolectada')" ${!puedeModificar ? 'disabled' : ''}>
+                        Recolectada
                     </button>
                     <button class="btn btn-devolver" onclick="devolverReceta(${folio})" ${!puedeModificar ? 'disabled' : ''}>
                         Devolver
