@@ -13,7 +13,7 @@
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-purple-100 via-pink-100 to-purple-200 min-h-screen">
+<body class="bg-gradient-to-br from-red-50 via-rose-50 to-red-100 min-h-screen">
 
     <div class="container mx-auto p-8">
 
@@ -43,16 +43,16 @@
 
                 @if(Session::has('usuario'))
                     <!-- CARD DEL FARMACÉUTICO -->
-                    <div class="bg-white rounded-2xl border border-purple-100 shadow-xl 
+                    <div class="bg-white rounded-2xl border border-red-100 shadow-xl 
                                 p-6 flex flex-col items-center text-center 
                                 hover:shadow-2xl transition-all duration-300">
 
                         <!-- ICONO -->
-                        <div class="w-20 h-20 bg-purple-200 rounded-full flex items-center justify-center 
+                        <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center 
                                     shadow-md mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                 class="w-12 h-12 text-purple-700">
+                                 class="w-12 h-12 text-red-600">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.118A7.5 7.5 0 0 1 12 15a7.5 7.5 0 0 1 7.5 5.118"/>
                             </svg>

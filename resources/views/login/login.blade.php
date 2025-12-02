@@ -7,10 +7,25 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Iniciar Sesión</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: 'hsl(190, 93%, 41%)',
+                            dark: 'hsl(190, 93%, 32%)',
+                            light: 'hsl(190, 93%, 50%)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
 <body id="main-body"
-    class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4 transition-colors duration-500">
+    class="bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50 min-h-screen flex items-center justify-center p-4 transition-colors duration-500">
 
     <div class="w-full max-w-md">
         <div class="text-center mb-8">
@@ -54,7 +69,7 @@
                     </label>
                     <div class="grid grid-cols-2 gap-4">
                         <button type="button" onclick="setTipoUsuario('paciente')" id="btn-paciente"
-                            class="tipo-usuario-btn active flex items-center justify-center py-3 px-4 border-2 border-indigo-600 bg-indigo-600 text-white rounded-lg font-medium transition duration-150 ease-in-out">
+                            class="tipo-usuario-btn active flex items-center justify-center py-3 px-4 border-2 border-primary bg-primary text-white rounded-lg font-medium transition duration-150 ease-in-out">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -87,7 +102,7 @@
                             </svg>
                         </div>
                         <input type="email" id="correo" name="correo" value="{{ old('correo') }}" required
-                            class="theme-input block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm @error('correo') border-red-300 @enderror"
+                            class="theme-input block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out sm:text-sm @error('correo') border-red-300 @enderror"
                             placeholder="tu@ejemplo.com" autocomplete="email">
                     </div>
                     @error('correo')
@@ -109,7 +124,7 @@
                         </div>
                         <input type="password" id="nip" name="nip" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
                             required
-                            class="theme-input block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm @error('nip') border-red-300 @enderror"
+                            class="theme-input block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 ease-in-out sm:text-sm @error('nip') border-red-300 @enderror"
                             placeholder="••••••••" autocomplete="current-password">
                         <button type="button" onclick="togglePassword()"
                             class="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -133,7 +148,7 @@
 
                 <div>
                     <button id="submit-btn" type="submit"
-                        class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                        class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150 ease-in-out">
                         <svg id="submit-icon" class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -158,7 +173,7 @@
 
             <div id="toggle-mode-section" class="mt-6">
                 <button id="toggle-mode-btn" type="button" onclick="toggleMode()"
-                    class="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    class="w-full flex justify-center items-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-150 ease-in-out">
                     <svg id="toggle-icon" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z">
@@ -186,34 +201,34 @@
 
             if (tipo === 'paciente') {
 
-                btnPaciente.className = 'tipo-usuario-btn active flex items-center justify-center py-3 px-4 border-2 border-indigo-600 bg-indigo-600 text-white rounded-lg font-medium transition duration-150 ease-in-out';
+                btnPaciente.className = 'tipo-usuario-btn active flex items-center justify-center py-3 px-4 border-2 border-primary bg-primary text-white rounded-lg font-medium transition duration-150 ease-in-out';
                 btnAdmin.className = 'tipo-usuario-btn flex items-center justify-center py-3 px-4 border-2 border-gray-300 bg-white text-gray-700 rounded-lg font-medium transition duration-150 ease-in-out hover:bg-gray-50';
 
-                body.classList.remove('from-red-50', 'to-red-100');
-                body.classList.add('from-blue-50', 'to-indigo-100');
+                body.classList.remove('from-red-50', 'to-red-100', 'via-red-50');
+                body.classList.add('from-cyan-50', 'via-teal-50', 'to-emerald-50');
 
                 inputs.forEach(input => {
                     input.classList.remove('focus:ring-red-500', 'focus:border-red-500');
-                    input.classList.add('focus:ring-indigo-500', 'focus:border-indigo-500');
+                    input.classList.add('focus:ring-primary', 'focus:border-primary');
                 });
 
                 submitBtn.classList.remove('bg-red-600', 'hover:bg-red-700', 'focus:ring-red-500');
-                submitBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700', 'focus:ring-indigo-500');
+                submitBtn.classList.add('bg-primary', 'hover:bg-primary-dark', 'focus:ring-primary');
 
             } else {
 
                 btnAdmin.className = 'tipo-usuario-btn active flex items-center justify-center py-3 px-4 border-2 border-red-600 bg-red-600 text-white rounded-lg font-medium transition duration-150 ease-in-out';
                 btnPaciente.className = 'tipo-usuario-btn flex items-center justify-center py-3 px-4 border-2 border-gray-300 bg-white text-gray-700 rounded-lg font-medium transition duration-150 ease-in-out hover:bg-gray-50';
 
-                body.classList.remove('from-blue-50', 'to-indigo-100');
-                body.classList.add('from-red-50', 'to-red-100');
+                body.classList.remove('from-cyan-50', 'via-teal-50', 'to-emerald-50');
+                body.classList.add('from-red-50', 'via-red-50', 'to-red-100');
 
                 inputs.forEach(input => {
-                    input.classList.remove('focus:ring-indigo-500', 'focus:border-indigo-500');
+                    input.classList.remove('focus:ring-primary', 'focus:border-primary');
                     input.classList.add('focus:ring-red-500', 'focus:border-red-500');
                 });
 
-                submitBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'focus:ring-indigo-500');
+                submitBtn.classList.remove('bg-primary', 'hover:bg-primary-dark', 'focus:ring-primary');
                 submitBtn.classList.add('bg-red-600', 'hover:bg-red-700', 'focus:ring-red-500');
             }
 
