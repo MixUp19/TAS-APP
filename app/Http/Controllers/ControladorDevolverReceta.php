@@ -56,26 +56,31 @@ class ControladorDevolverReceta
         $modelo = $this->obtenerOInicializarModelo($request);
         $modelo->cambiarEstadoReceta($folio, $nuevoEstado);
 
+        $receta = $modelo->obtenerReceta($folio);
+
         /*return response()->json([
             'success' => true,
             'message' => 'Estado actualizado correctamente'
         ]);*/
 
-        return redirect()->back()->with('success', 'Estado actualizado correctamente');
-
+        return view('receta.receta', [
+            'receta' => $receta
+        ])->with('success', 'Estado actualizado correctamente');
     }
 
     public function cancelarReceta(Request $request){
         $modelo = $this->obtenerOInicializarModelo($request);
         $modelo->cancelarReceta($request->input('folio'));
-        $modelo->confirmarCancelacion();
+        $receta = $modelo->confirmarCancelacion();
 
         /*return response()->json([
             'success' => true,
             'message' => 'Receta cancelada y devolución notificada'
         ]);*/
 
-        return redirect()->back()->with('success', 'Receta cancelada y devolución notificada');
+        return view('receta.receta', [
+            'receta' => $receta
+        ])->with('success', 'Receta cancelada correctamente');
     }
 
     public function buscarReceta(Request $request){

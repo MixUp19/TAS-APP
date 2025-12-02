@@ -26,10 +26,12 @@ class ModeloDevolverReceta
         $this->recetaPorCancelar->setEstado(estado: "Cancelada");
     }
 
-    public function confirmarCancelacion()
+    public function confirmarCancelacion() : Receta
     {
         $this->recetaPorCancelar->notificarDevolucion();
         $this->recetaRepository->actualizarReceta($this->recetaPorCancelar);
+
+        return $this->recetaPorCancelar;
     }
 
     public function obtenerRecetas(){
