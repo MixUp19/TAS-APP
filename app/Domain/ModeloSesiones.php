@@ -20,7 +20,7 @@ class ModeloSesiones
         $this->adminRepository = new AdminSucursalRepository();
     }
 
-    public function obtenerPaciente(string $correo, string $nip): DomainPaciente
+    public function obtenerPaciente(string $correo, string $nip): ?DomainPaciente
     {
         try {
             DB::beginTransaction();
