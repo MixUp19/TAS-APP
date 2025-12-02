@@ -175,4 +175,7 @@ ALTER TABLE "Receta" ADD COLUMN "RecetaEstado" varchar(10) default 'Pendiente';
 select * from "Paciente";
 
 select * from "Receta";
-select * from "LINEA_RECETA"
+select * from "LINEA_RECETA";
+
+update "Paciente" set "PacienteActivo" = false;
+update "AdminSucursal" set "AdminActivo" = false;
