@@ -86,7 +86,7 @@ class RecetaRepository
             $lineaReceta = $this->mapearLineaReceta($lineaModel);
             $receta->anadirLineaLr($lineaReceta);
         }
-        
+
         \Log::info('Receta mapeada', [
             'folio' => $recetaModel->RecetaFolio,
             'lineas_domain' => count($receta->getLineasRecetas())
@@ -115,7 +115,7 @@ class RecetaRepository
             $detalleLineaReceta = $this->mapearDetalleLineaReceta($detalleModel);
             $lineaReceta->anadirDetalleLineaReceta($detalleLineaReceta);
         }
-        
+
         \Log::info('Línea mapeada', [
             'medicamento_id' => $lineaModel->MedicamentoID,
             'detalles_domain_count' => count($lineaReceta->getDetalleLineaReceta())
@@ -190,8 +190,10 @@ class RecetaRepository
             }
 
 
-            $recetaModel = RecetaModel::findOrFail($folio);
-            $recetaModel->update([
+            $recetaModel = RecetaModel::updateOrCreate(
+                [
+                    'RecetaFolio' => $folio,
+                ],[
                 'CedulaDoctor' => $receta->getCedulaDoctor(),
                 'RecetaFecha' => $receta->getFecha()->format('Y-m-d'),
                 'PacienteID' => $receta->getPaciente()->getId(),
@@ -200,16 +202,15 @@ class RecetaRepository
                 'RecetaEstado' => $receta->getEstado(),
             ]);
 
-
             foreach ($receta->getLineasRecetas() as $lineaReceta) {
                 $medicamento = $lineaReceta->getMedicamento();
 
 
-                LineaRecetaModel::updateOrCreate(
+                LineaRecetaModel::where(
                     [
                         'RecetaFolio' => $folio,
                         'MedicamentoID' => $medicamento->getId(),
-                    ],
+                    ])->update(
                     [
                         'LRCantidad' => $lineaReceta->getCantidad(),
                         'LRPrecio' => $medicamento->getPrecio(),
@@ -220,18 +221,15 @@ class RecetaRepository
                 foreach ($lineaReceta->getDetalleLineaReceta() as $detalle) {
                     $sucursal = $detalle->getSucursal();
 
-                    DetalleLineaRecetaModel::updateOrCreate(
-                        [
-                            'RecetaFolio' => $folio,
-                            'MedicamentoID' => $medicamento->getId(),
-                            'SucursalID' => $sucursal->getSucursalId(),
-                            'CadenaID' => $sucursal->getCadena()->getCadenaId(),
-                        ],
-                        [
-                            'DLRCantidad' => $detalle->getCantidad(),
-                            'DLREstatus' => $detalle->getEstatus(),
-                        ]
-                    );
+                    DetalleLineaRecetaModel::where([
+                        'RecetaFolio' => $folio,
+                        'MedicamentoID' => $medicamento->getId(),
+                        'SucursalID' => $sucursal->getSucursalId(),
+                        'CadenaID' => $sucursal->getCadena()->getCadenaId(),
+                    ])->update([
+                        'DLRCantidad' => $detalle->getCantidad(),
+                        'DLREstatus' => $detalle->getEstatus(),
+                    ]);
                 }
             }
 

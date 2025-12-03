@@ -1,181 +1,377 @@
---
--- Script de Creación de Base de Datos para el Diagrama Relacional de Farmacia (Versión 2.0)
---
-
--- Se recomienda crear la base de datos y conectarse a ella antes de ejecutar estas sentencias.
--- Por ejemplo: CREATE DATABASE "farmacia_v2_db"; \c farmacia_v2_db
-
--------------------------------------------
--- 1. Tablas Sin Dependencias Foráneas
--------------------------------------------
-
-CREATE TABLE "Estado" (
-                          "EstadoID" INT PRIMARY KEY,
-                          "EstadoNombre" VARCHAR(100) NOT NULL UNIQUE
+create table migrations
+(
+    id        serial
+        primary key,
+    migration varchar(255) not null,
+    batch     integer      not null
 );
 
-CREATE TABLE "Cadena" (
-                          "CadenaID" VARCHAR(10) PRIMARY KEY,
-                          "CadenaNombre" VARCHAR(100) NOT NULL UNIQUE
+alter table migrations
+    owner to avnadmin;
+
+create table users
+(
+    id                bigserial
+        primary key,
+    name              varchar(255) not null,
+    email             varchar(255) not null
+        constraint users_email_unique
+            unique,
+    email_verified_at timestamp(0),
+    password          varchar(255) not null,
+    remember_token    varchar(100),
+    created_at        timestamp(0),
+    updated_at        timestamp(0)
 );
 
-CREATE TABLE "Paciente" (
-                            "PacienteID" SERIAL PRIMARY KEY,
-                            "PacienteNombre" VARCHAR(100) NOT NULL,
-                            "PacienteApellidoPaterno" VARCHAR(100) NOT NULL,
-                            "PacienteApellidoMaterno" VARCHAR(100),
-                            "PacienteTelefono" VARCHAR(15),
-                            "PacienteCorreo" VARCHAR(100) UNIQUE,
-                            "PacienteFechaRegistro" DATE NOT NULL
+alter table users
+    owner to avnadmin;
+
+create table password_reset_tokens
+(
+    email      varchar(255) not null
+        primary key,
+    token      varchar(255) not null,
+    created_at timestamp(0)
 );
 
-CREATE TABLE "Medicamentos" (
-                                "MedicamentoID" SERIAL PRIMARY KEY,
-                                "MedicamentoNombre" VARCHAR(100) NOT NULL,
-                                "MedicamentoPrecio" NUMERIC(10, 2) NOT NULL,
-                                "MedicamentoCompuestoActivo" VARCHAR(100),
-                                "MedicamentoUnidad" VARCHAR(50),
-                                "MedicamentoContenido" VARCHAR(100),
-                                UNIQUE ("MedicamentoNombre", "MedicamentoCompuestoActivo")
+alter table password_reset_tokens
+    owner to avnadmin;
+
+create table sessions
+(
+    id            varchar(255) not null
+        primary key,
+    user_id       bigint,
+    ip_address    varchar(45),
+    user_agent    text,
+    payload       text         not null,
+    last_activity integer      not null
 );
 
--------------------------------------------
--- 2. Tablas con Dependencias de Nivel 1
--------------------------------------------
+alter table sessions
+    owner to avnadmin;
 
-CREATE TABLE "Ciudad" (
-                          "CiudadID" INT PRIMARY KEY,
-                          "CiudadNombre" VARCHAR(100) NOT NULL,
-                          "EstadoID" INT NOT NULL,
-                          CONSTRAINT fk_ciudad_estado FOREIGN KEY ("EstadoID")
-                              REFERENCES "Estado" ("EstadoID") ON DELETE RESTRICT,
-                          UNIQUE ("CiudadNombre", "EstadoID")
+create index sessions_user_id_index
+    on sessions (user_id);
+
+create index sessions_last_activity_index
+    on sessions (last_activity);
+
+create table cache
+(
+    key        varchar(255) not null
+        primary key,
+    value      text         not null,
+    expiration integer      not null
 );
 
-CREATE TABLE "Tarjeta" (
-                           "Tarjeta" CHAR(16) PRIMARY KEY,
-                           "TarjetaNombreTitular" VARCHAR(100) NOT NULL,
-                           "TarjetaTipoTarjeta" VARCHAR(50),
-                           "TarjetaFechaVencimiento" DATE NOT NULL,
-                           "TarjetaCVV" VARCHAR(4) NOT NULL,
-                           "PacienteID" INT NOT NULL,
-                           CONSTRAINT fk_tarjeta_paciente FOREIGN KEY ("PacienteID")
-                               REFERENCES "Paciente" ("PacienteID") ON DELETE CASCADE
+alter table cache
+    owner to avnadmin;
+
+create table cache_locks
+(
+    key        varchar(255) not null
+        primary key,
+    owner      varchar(255) not null,
+    expiration integer      not null
 );
 
--------------------------------------------
--- 3. Tablas con Dependencias de Nivel 2
--------------------------------------------
+alter table cache_locks
+    owner to avnadmin;
 
-CREATE TABLE "Sucursal" (
-                            "SucursalID" VARCHAR(10),
-                            "SucursalColonia" VARCHAR(255),
-                            "SucursalCalle" VARCHAR(255),
-                            "SucursalLatitud" NUMERIC(10, 6),
-                            "SucursalLongitud" NUMERIC(10, 6),
-                            "CiudadID" INT NOT NULL,
-                            "CadenaID" VARCHAR(10) NOT NULL,
-                            PRIMARY KEY ("SucursalID", "CadenaID"),
-                            CONSTRAINT fk_sucursal_ciudad FOREIGN KEY ("CiudadID")
-                                REFERENCES "Ciudad" ("CiudadID") ON DELETE RESTRICT,
-                            CONSTRAINT fk_sucursal_cadena FOREIGN KEY ("CadenaID")
-                                REFERENCES "Cadena" ("CadenaID") ON DELETE RESTRICT
+create table jobs
+(
+    id           bigserial
+        primary key,
+    queue        varchar(255) not null,
+    payload      text         not null,
+    attempts     smallint     not null,
+    reserved_at  integer,
+    available_at integer      not null,
+    created_at   integer      not null
 );
 
-CREATE TABLE "Receta" (
-                          "RecetaFolio" SERIAL PRIMARY KEY, -- Especificado como SERIAL
-                          "CedulaDoctor" VARCHAR(20) NOT NULL,
-                          "RecetaFecha" DATE NOT NULL,
-                          "PacienteID" INT NOT NULL,
-                          "CadenaID" VARCHAR(10) NOT NULL,
-                          "SucursalID" VARCHAR(10) NOT NULL,
-                          CONSTRAINT fk_receta_paciente FOREIGN KEY ("PacienteID")
-                              REFERENCES "Paciente" ("PacienteID") ON DELETE RESTRICT,
-                          CONSTRAINT fk_receta_cadena FOREIGN KEY ("SucursalID","CadenaID")
-                              REFERENCES "Sucursal" ("SucursalID","CadenaID") ON DELETE RESTRICT
+alter table jobs
+    owner to avnadmin;
+
+create index jobs_queue_index
+    on jobs (queue);
+
+create table job_batches
+(
+    id             varchar(255) not null
+        primary key,
+    name           varchar(255) not null,
+    total_jobs     integer      not null,
+    pending_jobs   integer      not null,
+    failed_jobs    integer      not null,
+    failed_job_ids text         not null,
+    options        text,
+    cancelled_at   integer,
+    created_at     integer      not null,
+    finished_at    integer
 );
 
--------------------------------------------
--- 4. Tablas de Relación (Muchos a Muchos)
--------------------------------------------
+alter table job_batches
+    owner to avnadmin;
 
-CREATE TABLE "Inventario" (
-                              "SucursalID" VARCHAR(10) NOT NULL,
-                              "CadenaID" VARCHAR(10) NOT NULL,
-                              "MedicamentoID" INT NOT NULL,
-                              "InventarioCantidad" INT NOT NULL CHECK ("InventarioCantidad" >= 0),
-                              "InventarioMaximo" INT,
-                              "InventarioMinimo" INT,
-                              PRIMARY KEY ("SucursalID", "CadenaID", "MedicamentoID"),
-                              CONSTRAINT fk_inventario_sucursal FOREIGN KEY ("SucursalID","CadenaID")
-                                  REFERENCES "Sucursal" ("SucursalID","CadenaID") ON DELETE RESTRICT,
-                              CONSTRAINT fk_inventario_medicamento FOREIGN KEY ("MedicamentoID")
-                                  REFERENCES "Medicamentos" ("MedicamentoID") ON DELETE RESTRICT
+create table failed_jobs
+(
+    id         bigserial
+        primary key,
+    uuid       varchar(255)                           not null
+        constraint failed_jobs_uuid_unique
+            unique,
+    connection text                                   not null,
+    queue      text                                   not null,
+    payload    text                                   not null,
+    exception  text                                   not null,
+    failed_at  timestamp(0) default CURRENT_TIMESTAMP not null
 );
 
-CREATE TABLE "LINEA_RECETA" (
-                                "RecetaFolio" INT NOT NULL,
-                                "MedicamentoID" INT NOT NULL,
-                                "LRCantidad" INT NOT NULL CHECK ("LRCantidad" > 0),
-                                "LRPrecio" NUMERIC(10, 2) NOT NULL,
-                                PRIMARY KEY ("RecetaFolio", "MedicamentoID"),
-                                CONSTRAINT fk_lr_receta FOREIGN KEY ("RecetaFolio")
-                                    REFERENCES "Receta" ("RecetaFolio") ON DELETE CASCADE,
-                                CONSTRAINT fk_lr_medicamento FOREIGN KEY ("MedicamentoID")
-                                    REFERENCES "Medicamentos" ("MedicamentoID") ON DELETE RESTRICT
+alter table failed_jobs
+    owner to avnadmin;
+
+create table "Estado"
+(
+    "EstadoID"     integer      not null
+        primary key,
+    "EstadoNombre" varchar(100) not null
+        unique
 );
 
-CREATE TABLE "Detalle_Linea_Receta" (
-                                        "RecetaFolio" INT NOT NULL,
-                                        "MedicamentoID" INT NOT NULL,
-                                        "SucursalID" VARCHAR(10) NOT NULL,
-                                        "CadenaID" VARCHAR(10) NOT NULL,
-                                        "DLRCantidad" INT NOT NULL CHECK ("DLRCantidad" > 0),
-                                        "DLREstatus" VARCHAR(50),
-                                        PRIMARY KEY ("RecetaFolio", "MedicamentoID", "SucursalID", "CadenaID"),
-                                        CONSTRAINT fk_dlr_linea_receta FOREIGN KEY ("RecetaFolio", "MedicamentoID")
-                                            REFERENCES "LINEA_RECETA" ("RecetaFolio", "MedicamentoID") ON DELETE CASCADE,
-                                        CONSTRAINT fk_dlr_sucursal FOREIGN KEY ("SucursalID", "CadenaID")
-                                            REFERENCES "Sucursal" ("SucursalID","CadenaID") ON DELETE RESTRICT
+alter table "Estado"
+    owner to avnadmin;
+
+create table "Cadena"
+(
+    "CadenaID"     varchar(10)  not null
+        primary key,
+    "CadenaNombre" varchar(100) not null
+        unique
 );
 
-alter table "Paciente" add column "PacienteContrasena" VARCHAR(100);
-alter table "Paciente" add column "PacienteActivo" BOOLEAN DEFAULT false;
-alter table "Paciente" add column "PacienteIntentosFallidos" INT DEFAULT 0;
-alter table "Paciente" add column "PacienteFechaUltimoIntento" DATE;
+alter table "Cadena"
+    owner to avnadmin;
 
-alter table "Sucursal" alter column "SucursalLatitud" type numeric(11,8);
-alter table "Sucursal" alter column "SucursalLongitud" type numeric(11,8);
+create table "Paciente"
+(
+    "PacienteID"                 serial
+        primary key,
+    "PacienteNombre"             varchar(100) not null,
+    "PacienteApellidoPaterno"    varchar(100) not null,
+    "PacienteApellidoMaterno"    varchar(100),
+    "PacienteTelefono"           varchar(15),
+    "PacienteCorreo"             varchar(100)
+        unique,
+    "PacienteFechaRegistro"      date         not null,
+    "PacienteContrasena"         varchar(100),
+    "PacienteActivo"             boolean default false,
+    "PacienteIntentosFallidos"   integer default 0,
+    "PacienteFechaUltimoIntento" date
+);
 
-Select * from "Estado";
-Select * from "Ciudad" where "EstadoID" = 25;
+alter table "Paciente"
+    owner to avnadmin;
 
-INSERT INTO "Medicamentos" ("MedicamentoNombre", "MedicamentoPrecio", "MedicamentoCompuestoActivo", "MedicamentoUnidad", "MedicamentoContenido") VALUES
-('Paracetamol', 25.50, 'Paracetamol', 'mg', '500 mg, 10 tabletas'),
-('Ibuprofeno', 30.00, 'Ibuprofeno', 'mg', '400 mg, 10 tabletas'),
-('Amoxicilina', 80.75, 'Amoxicilina', 'mg', '500 mg, 12 cápsulas'),
-('Loratadina', 45.00, 'Loratadina', 'mg', '10 mg, 10 tabletas'),
-('Omeprazol', 60.20, 'Omeprazol', 'mg', '20 mg, 14 cápsulas'),
-('Salbutamol Inhalador', 150.00, 'Salbutamol', 'mcg', '100 mcg/dosis, 200 dosis'),
-('Metformina', 75.50, 'Metformina', 'mg', '850 mg, 30 tabletas'),
-('Losartán', 95.00, 'Losartán potásico', 'mg', '50 mg, 30 tabletas'),
-('Aspirina', 20.00, 'Ácido acetilsalicílico', 'mg', '500 mg, 20 tabletas'),
-('Diclofenaco Gel', 70.00, 'Diclofenaco sódico', 'g', '60 g'),
-('Clonazepam', 120.00, 'Clonazepam', 'mg', '2 mg, 30 tabletas'),
-('Ciprofloxacino', 110.50, 'Ciprofloxacino', 'mg', '500 mg, 10 tabletas'),
-('Naproxeno', 40.00, 'Naproxeno sódico', 'mg', '550 mg, 10 tabletas'),
-('Cetirizina', 55.00, 'Diclorhidrato de cetirizina', 'mg', '10 mg, 10 tabletas'),
-('Atorvastatina', 180.00, 'Atorvastatina', 'mg', '20 mg, 30 tabletas');
+create table "Medicamentos"
+(
+    "MedicamentoID"              serial
+        primary key,
+    "MedicamentoNombre"          varchar(100)   not null,
+    "MedicamentoPrecio"          numeric(10, 2) not null,
+    "MedicamentoCompuestoActivo" varchar(100),
+    "MedicamentoUnidad"          varchar(50),
+    "MedicamentoContenido"       varchar(100),
+    unique ("MedicamentoNombre", "MedicamentoCompuestoActivo")
+);
 
-select * from "Sucursal";
+alter table "Medicamentos"
+    owner to avnadmin;
 
-select * from "Receta";
+create table "Ciudad"
+(
+    "CiudadID"     integer      not null
+        primary key,
+    "CiudadNombre" varchar(100) not null,
+    "EstadoID"     integer      not null
+        constraint fk_ciudad_estado
+            references "Estado"
+            on delete restrict,
+    unique ("CiudadNombre", "EstadoID")
+);
 
-ALTER TABLE "Receta" ADD COLUMN "RecetaEstado" varchar(10) default 'Pendiente';
-select * from "Paciente";
+alter table "Ciudad"
+    owner to avnadmin;
 
-select * from "Receta";
-select * from "LINEA_RECETA";
+create table "Tarjeta"
+(
+    "Tarjeta"                 char(16)     not null
+        primary key,
+    "TarjetaNombreTitular"    varchar(100) not null,
+    "TarjetaTipoTarjeta"      varchar(50),
+    "TarjetaFechaVencimiento" date         not null,
+    "TarjetaCVV"              varchar(4)   not null,
+    "PacienteID"              integer      not null
+        constraint fk_tarjeta_paciente
+            references "Paciente"
+            on delete cascade
+);
 
-update "Paciente" set "PacienteActivo" = false;
-update "AdminSucursal" set "AdminActivo" = false;
+alter table "Tarjeta"
+    owner to avnadmin;
+
+create table "Sucursal"
+(
+    "SucursalID"       varchar(10) not null,
+    "SucursalColonia"  varchar(255),
+    "SucursalCalle"    varchar(255),
+    "SucursalLatitud"  numeric(11, 8),
+    "SucursalLongitud" numeric(11, 8),
+    "CiudadID"         integer     not null
+        constraint fk_sucursal_ciudad
+            references "Ciudad"
+            on delete restrict,
+    "CadenaID"         varchar(10) not null
+        constraint fk_sucursal_cadena
+            references "Cadena"
+            on delete restrict,
+    primary key ("SucursalID", "CadenaID")
+);
+
+alter table "Sucursal"
+    owner to avnadmin;
+
+create table "Receta"
+(
+    "RecetaFolio"  serial
+        primary key,
+    "CedulaDoctor" varchar(20) not null,
+    "RecetaFecha"  date        not null,
+    "PacienteID"   integer     not null
+        constraint fk_receta_paciente
+            references "Paciente"
+            on delete restrict,
+    "CadenaID"     varchar(10) not null,
+    "SucursalID"   varchar(10) not null,
+    "RecetaEstado" varchar(10) default 'Pendiente'::character varying,
+    constraint fk_receta_cadena
+        foreign key ("SucursalID", "CadenaID") references "Sucursal"
+            on delete restrict
+);
+
+alter table "Receta"
+    owner to avnadmin;
+
+create table "Inventario"
+(
+    "SucursalID"         varchar(10) not null,
+    "CadenaID"           varchar(10) not null,
+    "MedicamentoID"      integer     not null
+        constraint fk_inventario_medicamento
+            references "Medicamentos"
+            on delete restrict,
+    "InventarioCantidad" integer     not null
+        constraint "Inventario_InventarioCantidad_check"
+            check ("InventarioCantidad" >= 0),
+    "InventarioMaximo"   integer,
+    "InventarioMinimo"   integer,
+    primary key ("SucursalID", "CadenaID", "MedicamentoID"),
+    constraint fk_inventario_sucursal
+        foreign key ("SucursalID", "CadenaID") references "Sucursal"
+            on delete restrict
+);
+
+alter table "Inventario"
+    owner to avnadmin;
+
+create table "LINEA_RECETA"
+(
+    "RecetaFolio"   integer        not null
+        constraint fk_lr_receta
+            references "Receta"
+            on delete cascade,
+    "MedicamentoID" integer        not null
+        constraint fk_lr_medicamento
+            references "Medicamentos"
+            on delete restrict,
+    "LRCantidad"    integer        not null
+        constraint "LINEA_RECETA_LRCantidad_check"
+            check ("LRCantidad" > 0),
+    "LRPrecio"      numeric(10, 2) not null,
+    primary key ("RecetaFolio", "MedicamentoID")
+);
+
+alter table "LINEA_RECETA"
+    owner to avnadmin;
+
+create table "Detalle_Linea_Receta"
+(
+    "RecetaFolio"   integer     not null,
+    "MedicamentoID" integer     not null,
+    "SucursalID"    varchar(10) not null,
+    "CadenaID"      varchar(10) not null,
+    "DLRCantidad"   integer     not null
+        constraint "Detalle_Linea_Receta_DLRCantidad_check"
+            check ("DLRCantidad" > 0),
+    "DLREstatus"    varchar(50),
+    primary key ("RecetaFolio", "MedicamentoID", "SucursalID", "CadenaID"),
+    constraint fk_dlr_linea_receta
+        foreign key ("RecetaFolio", "MedicamentoID") references "LINEA_RECETA"
+            on delete cascade,
+    constraint fk_dlr_sucursal
+        foreign key ("SucursalID", "CadenaID") references "Sucursal"
+            on delete restrict
+);
+
+alter table "Detalle_Linea_Receta"
+    owner to avnadmin;
+
+create table "AdminSucursal"
+(
+    "AdminNumeroEmpleado"     serial
+        primary key,
+    "AdminNombre"             varchar(100) not null,
+    "AdminApellidoPaterno"    varchar(100) not null,
+    "AdminApellidoMaterno"    varchar(100),
+    "AdminCorreo"             varchar(100) not null
+        unique,
+    "AdminTelefono"           varchar(15),
+    "AdminContrasena"         varchar(255) not null,
+    "AdminActivo"             boolean default false,
+    "AdminIntentosFallidos"   integer default 0,
+    "AdminFechaUltimoIntento" timestamp,
+    "SucursalID"              varchar(10)  not null,
+    "CadenaID"                varchar(10)  not null,
+    constraint fk_admin_sucursal
+        foreign key ("SucursalID", "CadenaID") references "Sucursal"
+            on delete restrict
+);
+
+alter table "AdminSucursal"
+    owner to avnadmin;
+
+Create index idx_admin_sucursal_sucursal_id on "AdminSucursal" ("SucursalID", "CadenaID");
+
+create index idx_admin_sucursal_admin_correo on "AdminSucursal" ("AdminCorreo");
+
+create index idx_medicamento_nombre on "Medicamentos" ("MedicamentoNombre");
+
+create index idx_receta_paciente_receta on "Receta"("PacienteID");
+
+create index idx_receta_sucursal_receta on "Receta"("SucursalID", "CadenaID");
+
+create index idx_inventario_sucursal_inventario on "Inventario"("SucursalID", "CadenaID");
+
+create index idx_inventario_medicamento_inventario on "Inventario"("MedicamentoID");
+
+create index idx_linea_receta_receta on "LINEA_RECETA"("RecetaFolio");
+
+create index idx_linea_receta_medicamento on "LINEA_RECETA"("MedicamentoID");
+
+create index idx_detalle_linea_receta_linea_receta on "Detalle_Linea_Receta"("RecetaFolio", "MedicamentoID");
+
+alter table "Receta" alter column "RecetaEstado" type Varchar(20);
+
+alter table "Detalle_Linea_Receta" alter column "DLREstatus" type Varchar(20);

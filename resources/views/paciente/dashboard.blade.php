@@ -21,10 +21,10 @@
         }
     </script>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         /* Card de receta */
         .receta-card {
             background: linear-gradient(135deg, #f0fdfa 0%, #e0f7fa 50%, #e6fffa 100%);
@@ -33,12 +33,12 @@
             padding: 20px;
             transition: all 0.3s ease;
         }
-        
+
         .receta-card:hover {
             box-shadow: 0 8px 25px hsla(190, 93%, 41%, 0.15);
             transform: translateY(-2px);
         }
-        
+
         /* Botón primario */
         .btn-primary-custom {
             background: linear-gradient(135deg, hsl(190, 93%, 45%) 0%, hsl(190, 93%, 38%) 100%);
@@ -57,13 +57,13 @@
             gap: 8px;
             text-decoration: none;
         }
-        
+
         .btn-primary-custom:hover {
             background: linear-gradient(135deg, hsl(190, 93%, 48%) 0%, hsl(190, 93%, 35%) 100%);
             box-shadow: 0 6px 16px hsla(190, 93%, 41%, 0.4);
             transform: translateY(-2px);
         }
-        
+
         /* Info card interna */
         .info-card {
             background: white;
@@ -71,7 +71,7 @@
             padding: 16px;
             border: 1px solid hsla(190, 93%, 41%, 0.1);
         }
-        
+
         /* Medicamento item */
         .med-item {
             background: hsla(190, 93%, 41%, 0.05);
@@ -79,7 +79,7 @@
             padding: 10px 12px;
             transition: background 0.2s ease;
         }
-        
+
         .med-item:hover {
             background: hsla(190, 93%, 41%, 0.1);
         }
@@ -103,7 +103,7 @@
                 </div>
             </div>
         @endif
-        
+
         {{-- Resultados: Todas las Recetas o Búsqueda Específica --}}
         @if(isset($recetas) && count($recetas) > 0)
             {{-- Mostrar TODAS las recetas del paciente --}}
@@ -119,7 +119,7 @@
                         Total: <strong class="text-gray-700">{{ count($recetas) }}</strong> receta(s)
                     </span>
                 </div>
-                
+
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                     @foreach($recetas as $recetaItem)
                         <div class="receta-card">
@@ -128,12 +128,12 @@
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-800">Receta</h3>
                                     <p class="text-xs text-gray-600 mt-1">
-                                        <span class="font-medium">Folio:</span> 
+                                        <span class="font-medium">Folio:</span>
                                         <span class="font-bold" style="color: hsl(190, 93%, 38%);">{{ $recetaItem->getFolio() }}</span>
                                     </p>
                                 </div>
                                 <span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
-                                    Activa
+                                    {{$recetaItem->getEstado()}}
                                 </span>
                             </div>
 
@@ -154,7 +154,7 @@
                             </div>
 
                             {{-- Botón Ver Detalles --}}
-                            <a href="{{ route('receta.detalle', ['folio' => $recetaItem->getFolio()]) }}" 
+                            <a href="{{ route('receta.detalle', ['folio' => $recetaItem->getFolio()]) }}"
                                class="btn-primary-custom w-full text-center">
                                 Ver Detalles
                             </a>
@@ -171,14 +171,14 @@
                     </svg>
                     Resultados de la Búsqueda
                 </h2>
-                
+
                 <div class="receta-card p-6">
                     {{-- Encabezado de la Receta --}}
                     <div class="flex justify-between items-start mb-5 pb-4 border-b border-gray-200">
                         <div>
                             <h3 class="text-xl font-semibold text-gray-800">Receta Encontrada</h3>
                             <p class="text-sm text-gray-600 mt-1">
-                                <span class="font-medium">Folio:</span> 
+                                <span class="font-medium">Folio:</span>
                                 <span class="font-bold" style="color: hsl(190, 93%, 38%);">{{ $receta->getFolio() }}</span>
                             </p>
                         </div>
@@ -242,7 +242,7 @@
 
                     {{-- Botón para Ver Detalles Completos --}}
                     <div class="flex justify-end">
-                        <a href="{{ route('receta.detalle', ['folio' => $receta->getFolio()]) }}" 
+                        <a href="{{ route('receta.detalle', ['folio' => $receta->getFolio()]) }}"
                            class="btn-primary-custom">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

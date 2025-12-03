@@ -39,6 +39,12 @@ class LineaReceta
         $this->detalleLineaReceta[] = $detalleLineaReceta;
     }
 
+    public function setEstatus($estado){
+        foreach ($this->detalleLineaReceta as $dlr) {
+            $dlr->setEstatus($estado);
+        }
+    }
+
     public function getMedicamento(): Medicamento
     {
         return $this->medicamento;

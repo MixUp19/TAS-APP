@@ -102,6 +102,9 @@ class Receta
     public function setEstado(string $estado): void
     {
         $this->estado = $estado;
+        foreach ($this->lineasRecetas as $linea) {
+            $linea->setEstatus($estado);
+        }
     }
 
     public function getLineasRecetas(): array

@@ -21,6 +21,8 @@ class Receta extends Model
         'PacienteID',
         'CadenaID',
         'SucursalID',
+        'RecetaEstado',
+        'RecetaFolio',
     ];
 
     protected $casts = [

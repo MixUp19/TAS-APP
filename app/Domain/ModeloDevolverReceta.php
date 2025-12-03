@@ -38,11 +38,11 @@ class ModeloDevolverReceta
         if (!Session::has('usuario')) {
             return [];
         }
-         
+
         $cadenaId = Session::get('usuario')->getSucursal()->getCadena()->getCadenaId();
         $sucursalId = Session::get('usuario')->getSucursal()->getSucursalId();
 
-        $sucursal = $this->sucursalRepository->obtenerSucursal($sucursalId, $cadenaId); 
+        $sucursal = $this->sucursalRepository->obtenerSucursal($sucursalId, $cadenaId);
         return $this->recetaRepository->obtenerRecetasPendientesPorSucursal($sucursal);
     }
 

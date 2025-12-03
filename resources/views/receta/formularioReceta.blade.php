@@ -99,6 +99,47 @@
             box-shadow: 0 2px 10px hsla(190, 93%, 41%, 0.3);
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cadenaSelect = document.getElementById('cadena_id');
+            const sucursalSelect = document.getElementById('sucursal_id');
+            const todasLasOpciones = Array.from(sucursalSelect.querySelectorAll('option[data-cadena]'));
+
+            cadenaSelect.addEventListener('change', function() {
+                const cadenaSeleccionada = this.value;
+
+                // Limpiar el select de sucursales
+                sucursalSelect.innerHTML = '';
+
+                if (cadenaSeleccionada === '') {
+                    // Si no hay cadena seleccionada, deshabilitar sucursales
+                    sucursalSelect.disabled = true;
+                    const optionDefault = document.createElement('option');
+                    optionDefault.value = '';
+                    optionDefault.textContent = '-- Primero seleccione una cadena --';
+                    sucursalSelect.appendChild(optionDefault);
+                } else {
+                    // Habilitar select de sucursales
+                    sucursalSelect.disabled = false;
+
+                    // Añadir opción por defecto
+                    const optionDefault = document.createElement('option');
+                    optionDefault.value = '';
+                    optionDefault.textContent = '-- Seleccione una sucursal --';
+                    sucursalSelect.appendChild(optionDefault);
+
+                    // Filtrar y añadir solo las sucursales de la cadena seleccionada
+                    todasLasOpciones.forEach(option => {
+                        if (option.dataset.cadena === cadenaSeleccionada) {
+                            const newOption = option.cloneNode(true);
+                            newOption.style.display = '';
+                            sucursalSelect.appendChild(newOption);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </head>
 
 <body class="bg-gradient-to-br from-cyan-50 via-teal-50 to-emerald-50 min-h-screen">
@@ -136,9 +177,28 @@
                         @csrf
 
                         <div class="form-group">
+                            <label for="cadena_id">Seleccionar Cadena</label>
+                            <select name="cadena_id" id="cadena_id">
+                                <option value="">-- Seleccione una cadena --</option>
+                                @php
+                                    $cadenas = [];
+                                    foreach($sucursales as $sucursal) {
+                                        $cadenaId = $sucursal->getCadena()->getCadenaID();
+                                        if (!isset($cadenas[$cadenaId])) {
+                                            $cadenas[$cadenaId] = $sucursal->getCadena()->getNombre() ?? 'Cadena ' . $cadenaId;
+                                        }
+                                    }
+                                @endphp
+                                @foreach($cadenas as $cadenaId => $nombreCadena)
+                                    <option value="{{ $cadenaId }}">{{ $nombreCadena }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
                             <label for="sucursal_id">Seleccionar Sucursal de Retiro</label>
-                            <select name="sucursal_id" id="sucursal_id" required>
-                                <option value="">-- Seleccione una opción --</option>
+                            <select name="sucursal_id" id="sucursal_id" required disabled>
+                                <option value="">-- Primero seleccione una cadena --</option>
                                 @foreach($sucursales as $sucursal)
                                     @php
                                         $nombreCadena = $sucursal->getCadena()->getNombre() ?? 'Cadena ' . $sucursal->getCadena()->getCadenaID();
@@ -146,10 +206,12 @@
                                         if ($sucursal->getColonia()) {
                                             $direccion .= ($direccion ? ', ' : '') . $sucursal->getColonia();
                                         }
-                                        $texto = "Cadena: {$nombreCadena} - Sucursal {$direccion}";
+                                        $texto = "Sucursal {$direccion}";
                                     @endphp
                                     <option
-                                        value="{{ $sucursal->getSucursalId() }},{{ $sucursal->getCadena()->getCadenaID() }}">
+                                        value="{{ $sucursal->getSucursalId() }},{{ $sucursal->getCadena()->getCadenaID() }}"
+                                        data-cadena="{{ $sucursal->getCadena()->getCadenaID() }}"
+                                        style="display: none;">
                                         {{ $texto }}</option>
                                 @endforeach
                             </select>
@@ -178,8 +240,8 @@
                 </div>
             </div>
 
-        </div> 
-    </div> 
+        </div>
+    </div>
 
 </body>
 

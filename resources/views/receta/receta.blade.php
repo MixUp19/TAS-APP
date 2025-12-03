@@ -7,10 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        body { 
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         /* Card interna */
         .inner-card {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
@@ -18,14 +18,14 @@
             border-radius: 16px;
             padding: 24px;
         }
-        
+
         /* Tabla personalizada */
         .custom-table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
         }
-        
+
         .custom-table thead th {
             background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
             color: white;
@@ -34,30 +34,30 @@
             text-align: left;
             font-size: 14px;
         }
-        
+
         .custom-table thead th:first-child {
             border-radius: 10px 0 0 0;
         }
-        
+
         .custom-table thead th:last-child {
             border-radius: 0 10px 0 0;
         }
-        
+
         .custom-table tbody tr {
             transition: background 0.2s ease;
         }
-        
+
         .custom-table tbody tr:hover {
             background: #f1f5f9;
         }
-        
+
         .custom-table tbody td {
             padding: 14px 16px;
             border-bottom: 1px solid #e2e8f0;
             font-size: 14px;
             color: #374151;
         }
-        
+
         /* Botones de acción */
         .btn-action {
             padding: 10px 20px;
@@ -71,46 +71,46 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .btn-lista {
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
-        
+
         .btn-lista:hover:not(:disabled) {
             box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
             transform: translateY(-2px);
         }
-        
+
         .btn-recolectada {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
-        
+
         .btn-recolectada:hover:not(:disabled) {
             box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
             transform: translateY(-2px);
         }
-        
+
         .btn-devolver {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
-        
+
         .btn-devolver:hover:not(:disabled) {
             box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
             transform: translateY(-2px);
         }
-        
+
         .btn-action:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
         }
-        
+
         /* Badge sucursal */
         .branch-badge {
             display: inline-flex;
@@ -124,7 +124,7 @@
             font-weight: 500;
             margin: 2px;
         }
-        
+
         .branch-badge .order-num {
             background: white;
             color: #334155;
@@ -137,7 +137,7 @@
             font-weight: 700;
             font-size: 11px;
         }
-        
+
         /* Lista de orden de visita */
         .visit-item {
             display: flex;
@@ -150,17 +150,17 @@
             border: 1px solid #e2e8f0;
             transition: all 0.2s ease;
         }
-        
+
         .visit-item:hover {
             border-color: #94a3b8;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
-        
+
         .visit-item.start {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
             border-color: rgba(16, 185, 129, 0.3);
         }
-        
+
         .step-badge {
             background: linear-gradient(135deg, #475569 0%, #334155 100%);
             color: white;
@@ -169,11 +169,11 @@
             font-size: 12px;
             font-weight: 600;
         }
-        
+
         .step-number {
             background: linear-gradient(135deg, #475569 0%, #334155 100%);
         }
-        
+
         /* Mapa */
         #map {
             border-radius: 12px;
@@ -185,7 +185,7 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .fade-in {
             animation: fadeIn 0.4s ease-out;
         }
@@ -251,7 +251,7 @@
                 </svg>
                 Información General
             </h5>
-            
+
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="flex items-start gap-3">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-slate-200">
@@ -264,7 +264,7 @@
                         <p class="text-gray-800 font-semibold">{{ $receta->getPaciente()->getNombre() }} {{ $receta->getPaciente()->getApellidoPaterno() }}</p>
                     </div>
                 </div>
-                
+
                 <div class="flex items-start gap-3">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-slate-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -276,7 +276,7 @@
                         <p class="text-gray-800 font-semibold">{{ $receta->getCedulaDoctor() }}</p>
                     </div>
                 </div>
-                
+
                 <div class="flex items-start gap-3">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-slate-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -288,7 +288,7 @@
                         <p class="text-gray-800 font-semibold">{{ \Carbon\Carbon::parse($receta->getFecha())->format('d/m/Y') }}</p>
                     </div>
                 </div>
-                
+
                 <div class="flex items-start gap-3">
                     <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-slate-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -314,11 +314,11 @@
                     Medicamentos y Ruta de Recolección
                 </h5>
             </div>
-            
+
             @php
                 $lineas = $receta->getLineasRecetas();
             @endphp
-            
+
             @if(count($lineas) === 0)
                 <div class="p-6">
                     <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
@@ -371,7 +371,7 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 <div class="px-6 py-4 border-t border-gray-100 bg-slate-50 flex justify-end">
                     <div class="text-right">
                         <span class="text-gray-500 text-sm">Total:</span>
@@ -389,12 +389,12 @@
                 </svg>
                 Orden de Visita a Sucursales
             </h5>
-            
+
             @php
                 $visitedBranches = [];
                 $stepNumber = 1;
             @endphp
-            
+
             {{-- Punto de inicio --}}
             <div class="visit-item start">
                 <div class="flex items-center gap-3">
@@ -441,39 +441,39 @@
                     </svg>
                     Acciones
                 </h5>
-                
+
                 <div class="flex flex-wrap gap-4">
                     <form action="{{ route('receta.cambiarEstado') }}" method="POST">
                         @csrf
                         <input type="hidden" name="folio" value="{{ $receta->getFolio() }}">
                         <input type="hidden" name="estado" value="Lista para recoger">
                         <button type="submit" class="btn-action btn-lista"
-                            {{ !($receta->getEstado() !== 'Cancelada por no recoger' && $receta->getEstado() !== 'Recolectada') ? 'disabled' : '' }}>
+                            {{ !($receta->getEstado() !== 'Cancelada' && $receta->getEstado() !== 'Recolectada') ? 'disabled' : '' }}>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                             </svg>
                             Lista para recoger
                         </button>
                     </form>
-                    
+
                     <form action="{{ route('receta.cambiarEstado') }}" method="POST">
                         @csrf
                         <input type="hidden" name="folio" value="{{ $receta->getFolio() }}">
                         <input type="hidden" name="estado" value="Recolectada">
                         <button type="submit" class="btn-action btn-recolectada"
-                            {{ !($receta->getEstado() !== 'Cancelada por no recoger' && $receta->getEstado() !== 'Recolectada') ? 'disabled' : '' }}>
+                            {{ !($receta->getEstado() !== 'Cancelada' && $receta->getEstado() !== 'Recolectada') ? 'disabled' : '' }}>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                             </svg>
                             Recolectada
                         </button>
                     </form>
-                    
+
                     <form action="{{ route('receta.cancelar') }}" method="POST">
                         @csrf
                         <input type="hidden" name="folio" value="{{ $receta->getFolio() }}">
                         <button type="submit" class="btn-action btn-devolver"
-                            {{ !($receta->getEstado() !== 'Cancelada por no recoger' && $receta->getEstado() !== 'Recolectada') ? 'disabled' : '' }}>
+                            {{ !($receta->getEstado() !== 'Cancelada' && $receta->getEstado() !== 'Recolectada') ? 'disabled' : '' }}>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                             </svg>
@@ -564,7 +564,7 @@
     if (branches.length > 1) {
         const routeCoords = branches.map(b => [b.lat, b.lng]);
         routeCoords.push([branches[0].lat, branches[0].lng]);
-        
+
         L.polyline(routeCoords, {
             color: '#475569',
             weight: 4,

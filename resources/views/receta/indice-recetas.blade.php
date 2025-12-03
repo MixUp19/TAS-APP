@@ -406,7 +406,7 @@
             </div>
         `).join('');
 
-        const puedeModificar = receta.estado !== 'Cancelada por no recoger' && receta.estado !== 'Recolectada';
+        const puedeModificar = receta.estado !== 'Cancelada' && receta.estado !== 'Recolectada';
 
         contenido.innerHTML = `
             <div class="flex justify-between items-center mb-6 pb-4 border-b border-red-200">
