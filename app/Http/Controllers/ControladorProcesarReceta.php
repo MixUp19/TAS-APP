@@ -219,7 +219,6 @@ class ControladorProcesarReceta
         return view('receta.revisar', ['receta' => $receta]);
     }
 
-
     public function mostrarConfirmacion($folio)
     {
         return view('receta.confirmacion', ['folio' => $folio]);
