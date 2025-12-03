@@ -66,15 +66,6 @@ class ControladorProcesarReceta
         return view('receta/revisar', ['total' => $total, 'receta'=> $receta]);
     }
 
-
-    public function finalizarReceta(Request $request)
-    {
-        $modelo = $this->obtenerOInicializarModelo($request);
-        $total = $modelo->finalizarReceta();
-        $request->session()->forget('proceso_receta');
-        return $total;
-    }
-
     public function confirmarReceta(Request $request)
     {
         try {
@@ -114,29 +105,6 @@ class ControladorProcesarReceta
             ]);
             return back()->withErrors('Error al confirmar la receta: ' . $e->getMessage());
         }
-    }
-    public function cancelarReceta(Request $request){
-        $modelo = $this->obtenerOInicializarModelo($request);
-        $modelo->cancelarReceta();
-        $request->session()->forget('proceso_receta');
-    }
-    public function cambiarSucursal(Request $request, $sucursal){
-        $modelo = $this->obtenerOInicializarModelo($request);
-        $modelo->cambiarSucursal($sucursal);
-        $this->guardarModelo($request, $modelo);
-    }
-
-    public function modificarMedicamento(Request $request, $id, $cantidad)
-    {
-        $request->validate([
-            'medicamento_id'=> 'required|integer',
-            'cantidad' => 'required|integer|min:1',
-        ]);
-        $id = $request->input('medicamento_id');
-        $cantidad = $request->input('cantidad');
-        $modelo = $this->obtenerOInicializarModelo($request);
-        $modelo->modificarMedicamento($id, $cantidad);
-        $this->guardarModelo($request, $modelo);
     }
 
     public function escanearReceta(Request $request){
@@ -267,15 +235,15 @@ class ControladorProcesarReceta
     public function obtenerRecetasPaciente(Request $request)
     {
         $modelo = $this->obtenerOInicializarModelo($request);
-        
+
         $paciente = $request->session()->get('usuario');
-        
+
         if (!$paciente) {
             return redirect()->route('login')->withErrors('Debe iniciar sesión primero.');
         }
-        
+
         $recetas = $modelo->obtenerRecetasPaciente($paciente->getId());
-        
+
         return view('paciente.dashboard', ['recetas' => $recetas]);
     }
 }
