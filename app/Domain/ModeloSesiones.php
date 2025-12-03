@@ -41,8 +41,7 @@ class ModeloSesiones
             throw $th;
         }
     }
-
-
+    
     public function obtenerAdmin(string $correo, string $nip): ?DomainAdminSucursal
     {
         try {

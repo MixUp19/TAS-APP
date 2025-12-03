@@ -40,7 +40,6 @@ class MedicamentoRepository
             return $lineas; 
         });
     }
-
     private function restarExistencias(Sucursal $sucursal, int $medicamentoId, int $cantidad): void
     {
         $inventario = Inventario::where('SucursalID', $sucursal->getSucursalId())
@@ -52,7 +51,6 @@ class MedicamentoRepository
             $inventario->save();
         }
     }
-
     private function obtenerExistenciaMedicamento(Sucursal $sucursal, int $medicamentoId, int $cantidadSolicitada): int
     {
         $inventario = Inventario::where('SucursalID', $sucursal->getSucursalId())
@@ -92,7 +90,6 @@ class MedicamentoRepository
         }
         return $domain;
     }
-
     private function eloquentToDomain(MedicamentoModel $medicamento):Medicamento{
         return new Medicamento(
             $medicamento['MedicamentoID'],

@@ -28,7 +28,6 @@ class AdminSucursalRepository
 
         return $this->eloquentToDomain($adminModel);
     }
-
     public function actualizarAdminSucursal(AdminSucursal $admin): void
     {
         $adminModel = AdminSucursalModel::where('AdminCorreo', $admin->getEmail())->first();
@@ -40,7 +39,6 @@ class AdminSucursalRepository
             $adminModel->save();
         }
     }
-
     private function eloquentToDomain(AdminSucursalModel $adminModel): AdminSucursal
     {
         // Cargar sucursal manualmente usando claves compuestas
