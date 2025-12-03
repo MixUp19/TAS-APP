@@ -62,7 +62,6 @@ class LocalizadorService
         return $radioTierra * $c;
     }
 
-
     public function ordernarPorCercanía($sucursal, $sucursales)
     {
         return $this->localizarSucursal($sucursal, $sucursales);
