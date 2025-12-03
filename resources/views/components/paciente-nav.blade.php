@@ -35,8 +35,9 @@
             {{-- Mis Recetas --}}
             <form action="{{ route('receta.mis-recetas') }}" method="GET">
                 @csrf
-                <button type="submit" class="bg-purple-500 hover:bg-purple-600 
-                    text-white px-4 py-2 rounded-lg transition duration-150 flex items-center gap-2">
+                <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 
+                    text-white px-4 py-2 rounded-lg transition duration-150 flex items-center gap-2
+                    {{ request()->routeIs('receta.mis-recetas') || request()->routeIs('paciente.dashboard') ? 'border-b-4 border-cyan-800 shadow-lg' : '' }}">
                     
                     {{-- Icono Lista --}}
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" 
@@ -52,8 +53,9 @@
             {{-- Crear Receta --}}
             <form action="{{ route('receta.formulario') }}" method="GET">
                 @csrf
-                <button type="submit" class="bg-green-500 hover:bg-green-600 
-                    text-white px-4 py-2 rounded-lg transition duration-150 flex items-center gap-2">
+                <button type="submit" class="bg-teal-500 hover:bg-teal-600 
+                    text-white px-4 py-2 rounded-lg transition duration-150 flex items-center gap-2
+                    {{ request()->routeIs('receta.formulario') || request()->routeIs('receta.seleccionarMedicamentos') || request()->routeIs('receta.revisar') ? 'border-b-4 border-teal-800 shadow-lg' : '' }}">
 
                     {{-- Icono Agregar --}}
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" 

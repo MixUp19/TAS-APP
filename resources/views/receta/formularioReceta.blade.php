@@ -108,6 +108,17 @@
 
             <x-paciente-nav titulo="Formulario de Receta" />
 
+            {{-- Breadcrumbs de progreso --}}
+            <x-breadcrumbs 
+                :steps="[
+                    ['name' => 'Datos Generales'],
+                    ['name' => 'Medicamentos'],
+                    ['name' => 'Revisar'],
+                    ['name' => 'Confirmar']
+                ]"
+                :currentStep="1"
+            />
+
             <div class="flex justify-center mt-6">
                 <div class="form-card w-full max-w-xl">
                     <h2 class="text-2xl font-bold text-gray-800 text-center mb-8">

@@ -203,6 +203,17 @@
         {{-- Menú de Navegación Principal --}}
         <x-paciente-nav titulo="Seleccionar Medicamentos" />
 
+        {{-- Breadcrumbs de progreso --}}
+        <x-breadcrumbs 
+            :steps="[
+                ['name' => 'Datos Generales'],
+                ['name' => 'Medicamentos'],
+                ['name' => 'Revisar'],
+                ['name' => 'Confirmar']
+            ]"
+            :currentStep="2"
+        />
+
         {{-- Mensaje de éxito --}}
         @if (session('success'))
             <div class="mt-6 bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg">

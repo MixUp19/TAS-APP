@@ -92,6 +92,17 @@
         {{-- Menú de Navegación Principal --}}
         <x-paciente-nav titulo="Receta Confirmada" />
 
+        {{-- Breadcrumbs de progreso --}}
+        <x-breadcrumbs 
+            :steps="[
+                ['name' => 'Datos Generales'],
+                ['name' => 'Medicamentos'],
+                ['name' => 'Revisar'],
+                ['name' => 'Confirmar']
+            ]"
+            :currentStep="4"
+        />
+
         {{-- Contenido centrado --}}
         <div class="max-w-2xl mx-auto mt-8">
             

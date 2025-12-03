@@ -155,6 +155,17 @@
         {{-- Menú de Navegación Principal --}}
         <x-paciente-nav titulo="Revisar Receta" />
 
+        {{-- Breadcrumbs de progreso --}}
+        <x-breadcrumbs 
+            :steps="[
+                ['name' => 'Datos Generales'],
+                ['name' => 'Medicamentos'],
+                ['name' => 'Revisar'],
+                ['name' => 'Confirmar']
+            ]"
+            :currentStep="3"
+        />
+
         {{-- Subtítulo --}}
         <p class="text-gray-500 mt-2 mb-6 flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" style="color: hsl(190, 93%, 41%);" fill="none" viewBox="0 0 24 24" stroke="currentColor">

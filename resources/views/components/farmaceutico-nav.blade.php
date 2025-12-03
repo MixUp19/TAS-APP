@@ -22,7 +22,7 @@
 
             <button 
                 type="submit" 
-                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-150 flex items-center gap-2"
+                class="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg transition duration-150 flex items-center gap-2"
             >
                 <!-- ICONO BUSCAR -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
@@ -43,7 +43,8 @@
                 @csrf
                 <button 
                     type="submit" 
-                    class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition duration-150 flex items-center gap-2"
+                    class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition duration-150 flex items-center gap-2
+                    {{ request()->routeIs('receta.indiceRecetas') || request()->routeIs('receta.devolver') ? 'border-b-4 border-orange-800 shadow-lg' : '' }}"
                 >
                     <!-- ICONO DOCUMENTOS -->
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
